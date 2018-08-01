@@ -1,0 +1,21 @@
+{
+    "name": "hephaistos",
+    "version": "0.0.1",
+    "license": "",
+    "repository": "https://github.com/stevenluong/",
+    "dependencies": {
+        "angular-chart.js": "^1.0.3",
+        "bower": "*",
+        "connect": "*",
+        "express": "*",
+        "feedparser": "*",
+        "forever": "*",
+        "http-server": "*",
+        "querystring": "*",
+        "request": "*",
+        "scraperjs": "*",
+        "socket.io": "*",
+        "cron": "*",
+        "socket.io-client": "*"
+    }
+}

@@ -1,0 +1,28 @@
+version: '2'
+services:
+    loopback:
+        build: loopback/.
+        command: node .
+        volumes:
+            - ./loopback/server/:/loopback/server/
+            - /loopback/node_modules
+        restart: always
+        networks:
+            - nginx_default
+    reactjs:
+        build: reactjs/.
+        command: http-server ./build/. -p 80
+        depends_on: 
+            - loopback
+        #ports:
+        #    - "8001:80"
+        volumes:
+            - ./reactjs/:/reactjs
+            - /reactjs/node_modules
+        restart: always
+        networks:
+            - nginx_default
+
+networks:
+    nginx_default:
+        external: true

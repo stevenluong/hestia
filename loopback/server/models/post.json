@@ -1,0 +1,49 @@
+{
+  "name": "Post",
+  "plural": "Posts",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "replaceOnPUT": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "guid": {
+      "type": "string",
+      "required": true,
+      "id": true
+    },
+    "price": {
+      "type": "number"
+    },
+    "locationDescription": {
+      "type": "string"
+    },
+    "location": {
+      "type": "GeoPoint"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "surface": {
+      "type": "number"
+    },
+    "link": {
+      "type": "string"
+    },
+    "rooms": {
+      "type": "string"
+    },
+    "rate": {
+      "type": "number"
+    }
+
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
