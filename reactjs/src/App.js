@@ -29,7 +29,7 @@ class App extends Component {
             .then(posts=>{
                 //console.log(posts);
                 this.setState({posts:posts});
-                this.setState({filteredPosts:posts});
+                this.filter(1000000)
             });
     }
     toggleSidebar(){
@@ -55,11 +55,30 @@ class App extends Component {
     filter(a){
         this.setState({filterAmount: a});
         var filteredPosts = [];
+        var startOfTheDay = new Date();
+        startOfTheDay.setHours(0,0,0,0);
+        console.log(startOfTheDay)
+        console.log(this.state.posts)
         this.state.posts.forEach(p=>{
-            if(p<=a)
+            p = this.process(p);
+            //console.log("filter");
+            if(p.price<=a && p.displayed_on > startOfTheDay && p.surface>1)
                 filteredPosts.push(p)
         })
+        console.log(filteredPosts)
         this.setState({filteredPosts:filteredPosts})
+    }
+    process(post){
+        var p = post;
+        var t = 1.84/100;
+        var N = 25;
+        p.displayed_on = new Date(p.displayed_on);
+        p.costPerMonth = parseInt((p.price*t/12)/(1-Math.pow(1+t/12,-N*12)));
+        p.rate= parseInt(p.rate);
+        p.rent = parseInt(p.surface*20+300);
+        p.delta = p.rent-p.costPerMonth;
+        p.roi = (p.rent*12/p.price*100).toFixed(2);
+        return p;
     }
     displayMap(){
         this.setState({isMap:true});
@@ -182,6 +201,7 @@ class Sidebar extends Component {
                     <div>
                     <h2> Filters</h2>
                     <p> Amount : </p>
+                    //TODO Fix
                     <input type="text" value={filterAmount}/>
                     <button onClick={()=>this.filter(filterAmount)}
                         ><span className="glyphicon glyphicon-filter" aria-hidden="true"></span> Filter</button>
@@ -197,11 +217,16 @@ class List extends Component {
                 <Table responsive striped hover>
                 <thead>
                 <tr>
+                <th>Thumb</th>
                 <th>Link</th>
                 <th>Surface</th>
                 <th>Price <span className="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> </th>
                 <th>Price/m2 </th>
                 <th>Location</th>
+                <th>BETA - Cost/month (25y,1.84%)</th>
+                <th>BETA - Estimated Rent</th>
+                <th>BETA - Delta</th>
+                <th>BETA - Return</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -214,6 +239,11 @@ class List extends Component {
                         price={p.price}
                         rate={p.rate}
                         key={p.guid}
+                        guid={p.guid}
+                        rent={p.rent}
+                        costPerMonth={p.costPerMonth}
+                        roi={p.roi}
+                        delta={p.delta}
                         />
                         )}
         </tbody>
@@ -223,21 +253,36 @@ class List extends Component {
 }
 class Post extends Component {
     render() {
+        var green = {color:"green"};
+        var red= {color:"red"};
         return (
                 <tr>
                 <td><a href={this.props.link}><img src={this.props.image} height="30px" alt=""/></a></td>
+                <td><a href={this.props.link}>{this.props.guid}</a></td>
                 <td>{this.props.surface}</td>
                 {this.props.price <= 200000 ? (
-                        <td bgcolor='green'> {this.props.price}</td>
+                        <td style={green}> {this.props.price}</td>
                         ) : (
                         <td> {this.props.price}</td>
                         )}
                 {this.props.rate<= 10000 ? (
-                        <td bgcolor='green'> {this.props.rate}</td>
+                        <td style={green}> {this.props.rate}</td>
                         ) : (
                         <td> {this.props.rate}</td>
                         )}
                 <td>{this.props.locationDescription}</td>
+                <td>{this.props.costPerMonth}</td>
+                <td>{this.props.rent}</td>
+{this.props.delta>0 ? (
+                        <td style={green}> {this.props.delta}</td>
+                        ) : (
+                        <td style={red}> {this.props.delta}</td>
+                        )}
+{this.props.roi> 3 ? (
+                        <td style={green}> {this.props.roi}%</td>
+                        ) : (
+                        <td> {this.props.roi}%</td>
+                        )}
                 </tr>
                );
     }

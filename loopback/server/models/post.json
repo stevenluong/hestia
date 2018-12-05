@@ -39,8 +39,10 @@
     },
     "rate": {
       "type": "number"
+    }, 
+    "displayed_on": {
+      "type": "date"
     }
-
   },
   "validations": [],
   "relations": {},

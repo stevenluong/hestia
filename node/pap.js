@@ -83,7 +83,8 @@ var process = function(){
                 surface:surface, 
                 link:link, 
                 rooms:rooms,
-                rate:price/surface
+                rate:price/surface,
+                displayed_on:Date.now()
             };
             //console.log(offer);
             if(offer.guid == "pap:undefined" || surface == 1){

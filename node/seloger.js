@@ -2,6 +2,7 @@ var http = require('http');
 var request = require('request');
 var scraperjs = require('scraperjs');
 var tmp = scraperjs.StaticScraper.create('http://www.seloger.com/immobilier/achat/immo-paris-75/bien-appartement/');
+//var tmp = scraperjs.StaticScraper.create('https://www.seloger.com/list.htm?idtt=2,5&idtypebien=1,2&cp=75&tri=initial&naturebien=1,2,4&pxmax=300000');
 
 var offers = [] ;
 var process = function(){
@@ -64,7 +65,8 @@ var process = function(){
                 surface:surface, 
                 link:link, 
                 rooms:normalize(rooms),
-                rate:price/surface
+                rate:price/surface,
+                displayed_on:Date.now()
             };
             if(surface<10){
                 console.log(rawSurface);
