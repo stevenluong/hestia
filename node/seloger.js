@@ -7,11 +7,11 @@ var tmp = scraperjs.StaticScraper.create('http://www.seloger.com/immobilier/acha
 var offers = [] ;
 var process = function(){
     tmp.scrape(function($) {
-        //console.log('---a--');
+        console.log('---a--');
         //console.log($(".c-pa-info").find(".c-pa-criterion").toString());
-        $(".c-pa-list").map(function(el){
+        $("div[id*='root']").map(function(el){
             //            return $(this);
-            //console.log($(this));
+            console.log($(this).text());
             var v = $(this);
             //console.log('---x--');
             //console.log(v.find(".c-pa-criterion em").length);

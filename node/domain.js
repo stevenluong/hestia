@@ -1,14 +1,83 @@
 var http = require('http');
 var request = require('request');
 var scraperjs = require('scraperjs');
-var tmp = scraperjs.StaticScraper.create('https://www.pap.fr/annonce/vente-immobiliere-paris-75-g439-studio');
+var tmp = scraperjs.StaticScraper.create('https://www.domain.com.au/sale/mascot-nsw-2020/');
 
+var DEBUG = FALSE;
 var offers = [] ;
 var process = function(){
     tmp.scrape(function($) {
         //console.log('---a--');
         //console.log($(".c-pa-info").find(".c-pa-criterion").toString());
-        $(".search-list-item").map(function(el){
+        $(".listing-result__details").map(function(el){
+            //TODO - Get all links
+            var source = "domain";
+            var localId = "";
+            var price =0;
+            var description="";
+            var locationDescription=""
+            var location={lat:0,lng:0};
+            var image="";
+            var surface=0;
+            var link="";
+            var rooms=0;
+            //console.log($(this));
+            var v = $(this);
+
+            locationDescription = v.find(".address").text();
+            link=v.find(".address").attr("href");
+            if(link!=undefined){
+            var localIdSplit = link.split("-");
+            localId=localIdSplit[localIdSplit.length-1]
+            }
+            price=v.find(".listing-result__price").text();
+            rooms = v.find("[data-testid*=property-features-text-container]").text();
+            //IF NO LINK, THEN SKIP
+            if(link==undefined)
+                return;
+
+            if(DEBUG){
+            console.log("---");
+            console.log("LINK:"+link);
+            console.log("LOCALID:"+localId);
+            console.log("PRICE:"+price);
+            console.log("LOCATION:"+locationDescription);
+            console.log("ROOMS:"+rooms);
+            }
+
+
+            //MAP TO MODEL
+            var offer = {
+                guid: source+":"+localId,    
+                price:price,
+                locationDescription:description.substring(0,100),
+                description:description,
+                location:location,
+                image:image,
+                surface:surface, 
+                link:link, 
+                rooms:rooms,
+                rate:price/surface,
+                displayed_on:Date.now()
+            };
+            //console.log(offer);
+            //FILTER OUT
+            if(link==undefined){
+                console.log("UNPARSABLE")
+            }
+            //PUSH TO LOOPBACK
+            else{
+                console.log(offer);
+                //offers.push(offer);
+                putPost(offer);
+            }
+
+        })
+
+    })
+            //TODO - Get all details
+            //TODO - Clean old
+            /*
             var source = "pap";
             var url = "https://www.pap.fr";
             //            return $(this);
@@ -49,24 +118,6 @@ var process = function(){
             //console.log(v['0'].attribs);
             //console.log('CHILDREN');
             //console.log(v['0'].children);
-            /*
-               var children = v['0'].children;
-               children.forEach((c)=>{
-            //console.log('---c--');
-            //console.log(c);
-            //console.log('---f--');
-            if(c.attribs && c.attribs.class.indexOf("c-pa-criterion")!= -1){
-            //console.log(c);
-            c.children.forEach((cc)=>{
-            if(cc.name && cc.name.includes("em")){
-            console.log(cc.children[0].data)
-
-            }
-            });
-            }
-
-            })
-            */
             //console.log($(this));
             //console.log(price+"--PRICE")
 
@@ -108,6 +159,8 @@ var process = function(){
         //push to loopback
 
     })
+
+            */
 }
 var putPost = function(post){
     request.put({url:"https://hestia-loopback.slapps.fr/api/Posts",json:post},function(error,response,body){
