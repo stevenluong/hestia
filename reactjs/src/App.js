@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import { Button,Grid, Row, Col,Table, Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
 //import logo from './logo.svg';
+import List from './List.js';
+import Sidebar from './Sidebar.js';
 import './App.css';
 
 class App extends Component {
@@ -27,7 +29,7 @@ class App extends Component {
         fetch("https://hestia-loopback.slapps.fr/api/Posts")
             .then(result=>result.json())
             .then(posts=>{
-                //console.log(posts);
+                console.log(posts);
                 this.setState({posts:posts});
                 this.filter(1000000)
             });
@@ -36,6 +38,8 @@ class App extends Component {
         this.setState({toggled:!this.state.toggled});
         //console.log(this.state.toggled);
     }
+    //TODO - Fix map
+    /*
     toggleSidebarWithPost(p){
         //console.log(p);
         //this.setState({toggled:true});
@@ -47,6 +51,7 @@ class App extends Component {
         }
         this.setState({selectedPost:p});
     }
+    */
     updateDate(date){
         this.setState({date:date},()=>{
             this.updateTitles();
@@ -62,7 +67,8 @@ class App extends Component {
         this.state.posts.forEach(p=>{
             p = this.process(p);
             //console.log("filter");
-            if(p.price<=a && p.displayed_on > startOfTheDay && p.surface>1)
+            if(p.guid.indexOf("domain")!==-1)
+            //if(p.price<=a && p.displayed_on > startOfTheDay && p.surface>1)
                 filteredPosts.push(p)
         })
         console.log(filteredPosts)
@@ -103,6 +109,7 @@ class App extends Component {
         selectedPosts.sort(function(a,b){
             return new Date(a.price) - new Date(b.price);
         })
+        /*
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position)=>{
                 console.log(position);
@@ -111,6 +118,7 @@ class App extends Component {
         } else {
             console.log("not supported");
         }
+        */
 
         return (
                 <div>
@@ -145,7 +153,11 @@ class App extends Component {
             </div>
 
             <div id="page-content-wrapper">
-            {!this.state.isMap ? (
+                 <List 
+                    selectedPosts={selectedPosts}
+                    />
+            {/*
+                !this.state.isMap ? (
                     <List 
                     selectedPosts={selectedPosts}
                     />
@@ -161,18 +173,17 @@ class App extends Component {
                         lng={2.375347}
                         onClick={()=>this.toggleSidebarWithPost(selectedPosts[0])}
                         ><span className="glyphicon glyphicon-home" aria-hidden="true"></span> Steven s home</button>
-                        {selectedPosts.map(p => 
-                        <button className={p.rate<10000?"btn btn-success btn-sm":"btn btn-primary btn-sm"}
-                        lat={p.location.lat}
-                        lng={p.location.lng}
-                        onClick={()=>this.toggleSidebarWithPost(p)}
-                        ><span className="glyphicon glyphicon-home" aria-hidden="true"></span> Flat</button>
-
-                        )
-                        }
+                        //<button className={p.rate<10000?"btn btn-success btn-sm":"btn btn-primary btn-sm"}
+                        //lat={p.location.lat}
+                        //lng={p.location.lng}
+                        //onClick={()=>this.toggleSidebarWithPost(p)}
+                        //><span className="glyphicon glyphicon-home" aria-hidden="true"></span> Flat</button>
+                        //)
+                        //}
                         </GoogleMapReact>
                         </div>
-                      )}
+                      )
+                      */}
 
         </div>
             </div>
@@ -180,113 +191,7 @@ class App extends Component {
             );
     }
 }
-class Sidebar extends Component {
-    render(){
-        if(this.props.selectedPost){
-            var p = this.props.selectedPost;
-            return (
-                    <div>
-                    <h2> Details </h2>
-                    <p><a href={p.link}><img src={p.image} height="30px" alt=""/></a></p>
-                    <p>Surface :</p><p> {p.surface}</p>
-                    <p>Price : </p><p>{p.price}</p>
-                    <p>Rate : </p><p>{p.rate}</p>
-                    <p>Location : </p><p>{p.locationDescription}</p>
-                    </div>
-                   );
-        }else
-        {
-            var filterAmount = 0;
-            return (
-                    <div>
-                    <h2> Filters</h2>
-                    <p> Amount : </p>
-                    //TODO Fix
-                    <input type="text" value={filterAmount}/>
-                    <button onClick={()=>this.filter(filterAmount)}
-                        ><span className="glyphicon glyphicon-filter" aria-hidden="true"></span> Filter</button>
-                    </div>
 
-                   );
-        }
-    }
-}
-class List extends Component {
-    render(){
-        return (
-                <Table responsive striped hover>
-                <thead>
-                <tr>
-                <th>Thumb</th>
-                <th>Link</th>
-                <th>Surface</th>
-                <th>Price <span className="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> </th>
-                <th>Price/m2 </th>
-                <th>Location</th>
-                <th>BETA - Cost/month (25y,1.84%)</th>
-                <th>BETA - Estimated Rent</th>
-                <th>BETA - Delta</th>
-                <th>BETA - Return</th>
-                </tr>
-                </thead>
-                <tbody>
-                {this.props.selectedPosts.map(p=>
-                        <Post
-                        image={p.image}
-                        link={p.link}
-                        surface={p.surface}
-                        locationDescription={p.locationDescription}
-                        price={p.price}
-                        rate={p.rate}
-                        key={p.guid}
-                        guid={p.guid}
-                        rent={p.rent}
-                        costPerMonth={p.costPerMonth}
-                        roi={p.roi}
-                        delta={p.delta}
-                        />
-                        )}
-        </tbody>
-            </Table>
-            );
-    }
-}
-class Post extends Component {
-    render() {
-        var green = {color:"green"};
-        var red= {color:"red"};
-        return (
-                <tr>
-                <td><a href={this.props.link}><img src={this.props.image} height="30px" alt=""/></a></td>
-                <td><a href={this.props.link}>{this.props.guid}</a></td>
-                <td>{this.props.surface}</td>
-                {this.props.price <= 200000 ? (
-                        <td style={green}> {this.props.price}</td>
-                        ) : (
-                        <td> {this.props.price}</td>
-                        )}
-                {this.props.rate<= 10000 ? (
-                        <td style={green}> {this.props.rate}</td>
-                        ) : (
-                        <td> {this.props.rate}</td>
-                        )}
-                <td>{this.props.locationDescription}</td>
-                <td>{this.props.costPerMonth}</td>
-                <td>{this.props.rent}</td>
-{this.props.delta>0 ? (
-                        <td style={green}> {this.props.delta}</td>
-                        ) : (
-                        <td style={red}> {this.props.delta}</td>
-                        )}
-{this.props.roi> 3 ? (
-                        <td style={green}> {this.props.roi}%</td>
-                        ) : (
-                        <td> {this.props.roi}%</td>
-                        )}
-                </tr>
-               );
-    }
-}
 /*
    function time(date){
    var d = (new Date(date)).toString();
