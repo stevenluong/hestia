@@ -67,7 +67,7 @@ class App extends Component {
         this.state.posts.forEach(p=>{
             p = this.process(p);
             //console.log("filter");
-            if(p.guid.indexOf("domain")!==-1)
+            if(p.guid.indexOf("domain")!==-1 && p.displayed_on > startOfTheDay)
             //if(p.price<=a && p.displayed_on > startOfTheDay && p.surface>1)
                 filteredPosts.push(p)
         })
