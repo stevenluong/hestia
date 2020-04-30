@@ -3,24 +3,13 @@ var request = require('request');
 var scraperjs = require('scraperjs');
 var tmp = scraperjs.StaticScraper.create('https://www.pap.fr/annonce/vente-immobiliere-paris-75-g439-studio');
 
-var config = {
-  //server : "http://localhost:8529", // local
-  server : "https://athena.slapps.fr",
-  //dbUrl : "/_db/_system/hephaistos" // local
-  dbUrl : "/_db/production/hestia"
-}
-
-var source = "pap";
-
 var offers = [] ;
 var process = function(){
     tmp.scrape(function($) {
         //console.log('---a--');
         //console.log($(".c-pa-info").find(".c-pa-criterion").toString());
         $(".search-list-item").map(function(el){
-            console.log('---Offer---');
-            var offer = {}
-            //var source = "pap";
+            var source = "pap";
             var url = "https://www.pap.fr";
             //            return $(this);
             //console.log($(this));
@@ -28,33 +17,34 @@ var process = function(){
             //console.log('---x--');
             //console.log(v.find(".c-pa-criterion em").length);
             //var criterion =v.find(".c-pa-info .c-pa-criterion em");
-
+            var rawDescription = v.find("div .item-description").text();;
             //console.log(rawDescription+"--RAWDESCRIPTION")
             var localId = v.find("div .infos-box").attr("data-annonce");
             if(localId)
                 localId = JSON.parse(localId).id
             //console.log(localId+"--LOCALID")
-            var rooms = "TBD";
+            var rooms = "";
             var r = v.find("div .item-tags li:contains('pi')").text();
             if(r)
-                offer.rooms = r.split(" ")[0];
+                rooms = r.split(" ")[0];
             //console.log(rooms+"--ROOMS")
-            offer.surface = "TBD";
+            var surface = "1";
             var s = v.find("div .item-tags li:contains('m2')").text();
             if(s)
-                offer.surface = s.split(" ")[0];
+                surface = s.split(" ")[0];
             //console.log(s+"--RAWSURFACE")
             //console.log(surface+"--RAWSURFACE")
             var rawPrice = v.find("div .item-title .item-price").text();
 
-            offer.price = parseInt(normalize(rawPrice).replace(/\./g, '').slice(0,-1));
+            var price = parseInt(normalize(rawPrice).replace(/\./g, '').slice(0,-1));
             console.log(rawPrice+"--RAWPRICE")
             //TODO
-            offer.link = url+v.find("div .item-title").attr("href");
+            var link = url+v.find("div .item-title").attr("href");
             //console.log(link+"--LINK")
-            offer.image = v.find("a.img-liquid img").attr("src");
+            var image = v.find("a.img-liquid img").attr("src");
             //console.log(image+"--IMAGE")
             //console.log(v);
+            console.log('------');
             //console.log('ATTRIBS');
             //console.log(v['0'].attribs);
             //console.log('CHILDREN');
@@ -79,37 +69,26 @@ var process = function(){
             */
             //console.log($(this));
             //console.log(price+"--PRICE")
-            //DESCRIPTION
-            var rawDescription = v.find("div .item-description").text();;
+
             var description = normalize(rawDescription);
-            offer.description = description.split(".")[1];
-            offer.location = description.split(".")[0],
-            offer.locationCoord = {
+            var offer = {
+                guid: source+":"+localId,    
+                price:price,
+                locationDescription:description.substring(0,100),
+                description:description,
+                location:{
                     lat : 0,
                     lng : 0
-                };
-
-                //image:image,
-                //surface:surface,
-                //link:link,
-                //rooms:rooms,
-                //rate:price/surface,
-
-            //};
-            offer.lastDisplayed=Date.now();
-            if(offer.price == "TBD" || offer.surface=="TBD")
-              offer.rate = "TBD";
-            else {
-              offer.rate = offer.price/offer.surface;
-            }
-
-            offer.guid = source+":"+localId;
-            offer.currency = "€";
-            offer.city = "Paris";
-            offer.source = source;
-
+                },
+                image:image,
+                surface:surface, 
+                link:link, 
+                rooms:rooms,
+                rate:price/surface,
+                displayed_on:Date.now()
+            };
             console.log(offer);
-            if(offer.guid == "pap:undefined"){
+            if(offer.guid == "pap:undefined" || surface == 1){
                 //console.log(offer);
             }
             else{
@@ -125,21 +104,18 @@ var process = function(){
         })//.get();
     })
     .then(function() {
-        console.log(offers.length);
+        //console.log(offers.length);
         //push to loopback
 
     })
 }
 var putPost = function(post){
-    console.log(post.guid)
-    post._key = post.guid;
-    request.patch({url:config.server+config.dbUrl+"/offers/"+post.guid,json:post},function(error,response,body){
+    request.put({url:"https://hestia-loopback.slapps.fr/api/Posts",json:post},function(error,response,body){
         //console.log(title);
         if (!error && response.statusCode == 200) {
-          console.log(post.guid+" saved");
             //console.log(body);
         }else{
-            //console.log("ERROR");
+            console.log("ERROR");
             //console.log(body);
             //console.log(error);
         }
@@ -150,3 +126,5 @@ var normalize = function(s){
 }
 
 process();
+
+

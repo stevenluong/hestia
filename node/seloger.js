@@ -4,12 +4,22 @@ var scraperjs = require('scraperjs');
 var tmp = scraperjs.StaticScraper.create('http://www.seloger.com/immobilier/achat/immo-paris-75/bien-appartement/');
 //var tmp = scraperjs.StaticScraper.create('https://www.seloger.com/list.htm?idtt=2,5&idtypebien=1,2&cp=75&tri=initial&naturebien=1,2,4&pxmax=300000');
 
+var config = {
+  //server : "http://localhost:8529", // local
+  server : "https://athena.slapps.fr",
+  //dbUrl : "/_db/_system/hephaistos" // local
+  dbUrl : "/_db/production/hestia"
+}
+
 var offers = [] ;
 var process = function(){
     tmp.scrape(function($) {
         console.log('---a--');
+        console.log($.html());
         //console.log($(".c-pa-info").find(".c-pa-criterion").toString());
-        $("div[id*='root']").map(function(el){
+        //block__ShadowedBlock-sc-10w6hsj-0 ListContent__SmartClassifiedExtended-sc-1viyr2k-2 iddbNe classified__ClassifiedContainer-sc-1wmlctl-0 jzFgwH Card__CardContainer-sc-7insep-8 hglOTD
+        $(".ListContent__SmartClassifiedExtended-sc-1viyr2k-2").map(function(el){
+            console.log("in")
             //            return $(this);
             console.log($(this).text());
             var v = $(this);
@@ -49,7 +59,7 @@ var process = function(){
             })
             */
             //console.log($(this));
-            var surface = parseFloat(rawSurface.replace(/,/g,'.').slice(0,-2)); 
+            var surface = parseFloat(rawSurface.replace(/,/g,'.').slice(0,-2));
             var price = parseInt(normalize(rawPrice).replace(/\s/g, '').slice(0,-1));
             var description = normalize(rawDescription);
             var offer = {
@@ -62,8 +72,8 @@ var process = function(){
                     lng : 0
                 },
                 image:image,
-                surface:surface, 
-                link:link, 
+                surface:surface,
+                link:link,
                 rooms:normalize(rooms),
                 rate:price/surface,
                 displayed_on:Date.now()
@@ -73,7 +83,8 @@ var process = function(){
                 console.log(offer);
             }
             offers.push(offer);
-            putPost(offer);
+            console.log(offer);
+            //putPost(offer);
 
         })//.get();
     })
@@ -84,12 +95,15 @@ var process = function(){
     })
 }
 var putPost = function(post){
-    request.put({url:"https://hestia-loopback.slapps.fr/api/Posts",json:post},function(error,response,body){
+    console.log(post.guid)
+    post._key = post.guid;
+    request.patch({url:config.server+config.dbUrl+"/offers/"+post.guid,json:post},function(error,response,body){
         //console.log(title);
         if (!error && response.statusCode == 200) {
+          console.log(post.guid+" saved");
             //console.log(body);
         }else{
-            console.log("ERROR");
+            //console.log("ERROR");
             //console.log(body);
             //console.log(error);
         }
@@ -100,5 +114,3 @@ var normalize = function(s){
 }
 
 process();
-
-

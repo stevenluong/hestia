@@ -4,7 +4,7 @@
     "license": "",
     "repository": "https://github.com/stevenluong/",
     "dependencies": {
-        "angular-chart.js": "^1.0.3",
+        "angular-chart.js": "*",
         "bower": "*",
         "connect": "*",
         "express": "*",

@@ -24,6 +24,24 @@ const offerDocSchema = joi.object().required().keys({
   link: joi.string()
 }).unknown(); // allow additional attributes
 
+router.patch('/offers/:guid', function (req, res) {
+  console.log(req.pathParams.guid)
+  console.log(req.body)
+  var data = null;
+  //const data = receiptsCollection.update(req.pathParams.key,req.body);
+  if(offersCollection.exists(req.pathParams.guid))
+    data = offersCollection.update(req.pathParams.guid, req.body);
+  else
+    data = offersCollection.save(req.body);
+  res.send(data)
+})
+.body(offerDocSchema, 'Offer to update in the collection.')
+.pathParam('guid', joi.string().required(), 'GUID of the offer')
+.response(joi.object().required(), 'Offer stored in the collection.')
+.summary('Updates an Offer')
+.description('Updates an Offer based on a key = GUID');
+
+
 router.post('/offers', function (req, res) {
   const multiple = Array.isArray(req.body);
   const body = multiple ? req.body : [req.body];

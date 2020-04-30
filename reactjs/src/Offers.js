@@ -11,7 +11,7 @@ import Hidden from '@material-ui/core/Hidden';
 
 export default function Offers({offers}) {
   //var cleanedNews = props.news;
-  //var sortedAssets = []; //filteredNews.sort((a,b)=>(new Date(b.datetime))-(new Date(a.datetime)))
+  var sortedOffers = offers.sort((a,b)=>(new Date(a.rate))-(new Date(b.rate)))
   //console.log(sortedNews)
   return (
     <React.Fragment>
@@ -23,23 +23,25 @@ export default function Offers({offers}) {
             <TableCell>Image</TableCell>
           </Hidden>
             <TableCell>Id</TableCell>
-            <TableCell>Source</TableCell>
-            <TableCell>Price</TableCell>
-            <TableCell>Surface</TableCell>
+            <TableCell>City</TableCell>
+            <TableCell>Details</TableCell>
+            <TableCell>Rate</TableCell>
+            <TableCell>Location</TableCell>
             <TableCell>Description</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {offers.map(o => (
+          {sortedOffers.map(o => (
             <TableRow key={o.guid}>
             <Hidden smDown>
-              <TableCell><img src={o.imageLink} height="40" width="40" alt=""/></TableCell>
+              <TableCell><img src={o.image} height="40" width="40" alt=""/></TableCell>
             </Hidden>
-              <TableCell><Link href={o.link}>{o.guid} </Link></TableCell>
-              <TableCell>{o.source} <br/> <small>{o.datetime}</small></TableCell>
-              <TableCell>{o.price}</TableCell>
-              <TableCell>{o.surface}</TableCell>
-              <TableCell><Link href={o.link}>{o.description} </Link></TableCell>
+              <TableCell><Link href={o.link}>{o.guid} </Link>  <br/> <small>{o.lastDisplayed}</small></TableCell>
+              <TableCell>{o.city}</TableCell>
+              <TableCell>{o.price}{o.currency} <br/> {o.surface}m²</TableCell>
+              <TableCell>{parseInt(o.rate)}{o.currency}/m²</TableCell>
+              <TableCell>{o.location}</TableCell>
+              <TableCell><Link href={o.link}>{o.description.substring(0,30)} </Link></TableCell>
             </TableRow>
           ))}
         </TableBody>

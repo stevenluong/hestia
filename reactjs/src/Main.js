@@ -52,7 +52,14 @@ function getOffers(cb){
       .then(result=>result.json())
       .then(offers=>{
           console.log(offers);
-          cb(offers);
+          var filteredOffers = [];
+          offers.forEach((o, i) => {
+            o.lastDisplayed = moment(o.lastDisplayed).format("DD/MM/YYYY");
+            if(o.price !== "TBD" && o.surface !== "TBD")
+              filteredOffers.push(o)
+          });
+
+          cb(filteredOffers);
       });
 }
 
