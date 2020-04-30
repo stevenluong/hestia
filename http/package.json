@@ -19,7 +19,7 @@
         "angular-animate": "1.4.x",
         "angular-chart.js": "*",
         "chart.js": "*",
-        "jquery": "~2.1.1",
+        "jquery": "~3.5.0",
         "bootstrap": "~3.1.1",
         "querystring": "*"
     }
