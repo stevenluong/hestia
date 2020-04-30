@@ -45,7 +45,7 @@ export default function Filters({filters, setFilters, setFiltered}) {
       <p>
       Cities: <br/>
       {filters.cities.map((c,i) => (
-        <React.Fragment>
+        <React.Fragment key={i}>
         <Checkbox
         checked={c.selected}
         color="primary"
