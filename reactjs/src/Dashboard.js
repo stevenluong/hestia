@@ -33,20 +33,22 @@ export default function Dashboard({offers, filteredOffers, filters, setFilters, 
   return (
     <React.Fragment>
     <Grid container direction="row" spacing={3}>
-      <Grid item xs={12} md={9} lg={9}>
+    <Grid item xs={12} md={9} lg={9}>
+      <Paper className={paper}>
+        <Filters filters={filters} setFilters={setFilters} setFiltered={setFiltered}/>
+      </Paper>
+    </Grid>
+    <Grid item xs={12} md={3} lg={3}>
+      <Paper className={paper}>
+        <Day />
+      </Paper>
+    </Grid>
+      <Grid item xs={12} md={12} lg={12}>
         <Paper className={classes.paper}>
           <Offers offers={offers} filteredOffers={filteredOffers}/>
         </Paper>
       </Grid>
-      <Grid item xs={12} md={3} lg={3}>
-        <Paper className={paper}>
-          <Day />
-        </Paper>
-        <br/>
-        <Paper className={paper}>
-          <Filters offers={offers} filters={filters} setFilters={setFilters} setFiltered={setFiltered}/>
-        </Paper>
-      </Grid>
+
     </Grid>
     </React.Fragment>
   );

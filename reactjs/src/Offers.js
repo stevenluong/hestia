@@ -9,9 +9,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import Hidden from '@material-ui/core/Hidden';
 
-export default function Offers({offers}) {
+export default function Offers({offers, filteredOffers}) {
   //var cleanedNews = props.news;
-  var sortedOffers = offers.sort((a,b)=>(new Date(a.rate))-(new Date(b.rate)))
+  var sortedOffers = filteredOffers.sort((a,b)=>(new Date(a.rate))-(new Date(b.rate)))
   //console.log(sortedNews)
   return (
     <React.Fragment>

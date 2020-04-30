@@ -45,21 +45,25 @@ var config = {
   usersUrl : "/_db/production/athena"
 }
 
-function getOffers(cb){
+function getOffers(setOffers, cbCities){
   var q = config.server+config.dbUrl+"/offers"
   console.log(q)
   fetch(q)
       .then(result=>result.json())
       .then(offers=>{
+          var cities = []
           console.log(offers);
           var filteredOffers = [];
           offers.forEach((o, i) => {
+            if(cities.indexOf(o.city)==-1)
+              cities.push(o.city);
             o.lastDisplayed = moment(o.lastDisplayed).format("DD/MM/YYYY");
-            if(o.price !== "TBD" && o.surface !== "TBD")
+            //if(o.price !== "TBD" && o.surface !== "TBD")
               filteredOffers.push(o)
           });
 
-          cb(filteredOffers);
+          setOffers(filteredOffers);
+          cbCities(cities);
       });
 }
 
@@ -158,12 +162,13 @@ export default function Main({url}) {
   const [userRequested, setUserRequested] = React.useState(false);
   const [user, setUser] = React.useState({_key:0});
   const [offers, setOffers] = React.useState([])
-  const [filtered, setFiltered] = React.useState(false)
+  //const [cities, setCities] = React.useState([])
+  const [filtered, setFiltered] = React.useState(true)
   const [filteredOffers, setFilteredOffers] = React.useState([])
   const [filters, setFilters] = React.useState({
-    price: 1000000,
-    surface: 1000,
-    city:"Paris"
+    //price: 1000000,
+    //surface: 1000,
+    cities:[]
   })
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -171,6 +176,11 @@ export default function Main({url}) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  //const handleSet = (f) => {
+  //  console.log("TEST")
+  //  setFilters(f);
+  //  console.log(f);
+  //};
   //const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   //console.log(authState.isAuthenticated);
   if (authState.isPending) {
@@ -194,13 +204,37 @@ export default function Main({url}) {
         usersHelpers.getUser(info, (u)=>{
           console.log(u)
           setUser(u)
-          getOffers(setOffers);
+          getOffers((o)=>{
+            setOffers(o);
+            setFilteredOffers(o);
+          }, (c)=>{
+            //console.log(c);
+            //setCities(c);
+            var cities = []
+            c.forEach((city, i) => {
+              cities.push({name:city, selected:true})
+            });
+            console.log(cities);
+            setFilters(Object.assign(filters,{cities:cities}))
+          });
         });
         //setUser(info)
       });
     }
   //console.log(filteredNews);
-  //console.log(filters);
+  if(!filtered){
+    setFiltered(true);
+    console.log(filters);
+    var t = [];
+    offers.forEach(o=>{
+      filters.cities.forEach(c=>{
+        if(c.selected && o.city === c.name)
+          t.push(o);
+      })
+    })
+    setFilteredOffers(t);
+    //console.log(cities);
+  }
 
   //console.log(url)
   var content = null;
