@@ -8,10 +8,14 @@ import Button from '@material-ui/core/Button';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import Hidden from '@material-ui/core/Hidden';
+import moment from 'moment';
 
 export default function Offers({offers, filteredOffers}) {
   //var cleanedNews = props.news;
-  var sortedOffers = filteredOffers.sort((a,b)=>(new Date(a.rate))-(new Date(b.rate)))
+  if(filteredOffers[0])
+    console.log(moment(filteredOffers[0].lastDisplayed))
+  //var sortedOffers = filteredOffers.sort((a,b)=>(moment(b.lastDisplayed)-moment(a.lastDisplayed)))
+  var sortedOffers = filteredOffers.sort((a,b)=>(a.rate-b.rate))
   //console.log(sortedNews)
   return (
     <React.Fragment>
@@ -19,29 +23,31 @@ export default function Offers({offers, filteredOffers}) {
       <Table size="small">
         <TableHead>
           <TableRow>
-          <Hidden smDown>
-            <TableCell>Image</TableCell>
-          </Hidden>
+            <TableCell>Date</TableCell>
             <TableCell>Id</TableCell>
             <TableCell>City</TableCell>
-            <TableCell>Details</TableCell>
+            <TableCell>Price</TableCell>
+            <TableCell>Surface</TableCell>
             <TableCell>Rate</TableCell>
-            <TableCell>Location</TableCell>
-            <TableCell>Description</TableCell>
+            <Hidden xlDown>
+            <TableCell>Est Rent</TableCell>
+            <TableCell>Est ROI</TableCell>
+            </Hidden>
           </TableRow>
         </TableHead>
         <TableBody>
           {sortedOffers.map(o => (
             <TableRow key={o.guid}>
-            <Hidden smDown>
-              <TableCell><img src={o.image} height="40" width="40" alt=""/></TableCell>
-            </Hidden>
-              <TableCell><Link href={o.link}>{o.guid} </Link>  <br/> <small>{o.lastDisplayed}</small></TableCell>
-              <TableCell>{o.city}</TableCell>
-              <TableCell>{o.price}{o.currency} <br/> {o.surface}m²</TableCell>
-              <TableCell>{parseInt(o.rate)}{o.currency}/m²</TableCell>
-              <TableCell>{o.location}</TableCell>
-              <TableCell><Link href={o.link}>{o.description.substring(0,30)} </Link></TableCell>
+              <TableCell>{moment(o.lastDisplayed).format("DD/MM/YYYY")}</TableCell>
+              <TableCell><Link href={o.link}>{o.guid} </Link></TableCell>
+              <TableCell>{o.city},<small>{o.source=="domain"?o.location.split(",")[1]:o.location}</small> </TableCell>
+              <TableCell style={o.price<200000?{color:'green'}:{}}>{o.price}{o.currency}</TableCell>
+              <TableCell style={o.estimate?{color:'yellow'}:{}}>{o.surface}m²</TableCell>
+              <TableCell>{isNaN(o.rate)?"":parseInt(o.rate)}{o.currency}/m²</TableCell>
+              <Hidden xlDown>
+              <TableCell>X{o.currency}/month</TableCell>
+              <TableCell>X * 12 / {o.price} *100</TableCell>
+              </Hidden>
             </TableRow>
           ))}
         </TableBody>

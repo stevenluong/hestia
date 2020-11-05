@@ -22,7 +22,7 @@ export default function Day() {
     <React.Fragment>
       <Title>{moment().format("DD/MM/YYYY")}</Title>
       <Typography color="textSecondary" className={classes.depositContext}>
-        Updated on {moment().format("DD/MM/YYYY HH:00")}
+        Updated on {moment().format("DD/MM/YYYY 07:00")}
       </Typography>
     </React.Fragment>
   );

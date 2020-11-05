@@ -52,16 +52,28 @@ function getOffers(setOffers, cbCities){
       .then(result=>result.json())
       .then(offers=>{
           var cities = []
-          console.log(offers);
+          //console.log(offers);
           var filteredOffers = [];
           offers.forEach((o, i) => {
             if(cities.indexOf(o.city)==-1)
               cities.push(o.city);
-            o.lastDisplayed = moment(o.lastDisplayed).format("DD/MM/YYYY");
+            //o.lastDisplayed = moment(o.lastDisplayed).format("DD/MM/YYYY");
+            if((!o.price||isNaN(o.price))&&(!o.surface||isNaN(o.surface)))
+              return
+            if(!o.price||isNaN(o.price))
+              //o.price = 0;
+              return;
+            if(!o.surface||isNaN(o.surface))
+              //o.rate = NaN;
+              return;
+            else {
+              o.rate = o.price/o.surface;
+            }
+            //console.log(o)
             //if(o.price !== "TBD" && o.surface !== "TBD")
-              filteredOffers.push(o)
+            filteredOffers.push(o)
           });
-
+          console.log(filteredOffers);
           setOffers(filteredOffers);
           cbCities(cities);
       });

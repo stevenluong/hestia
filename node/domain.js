@@ -1,7 +1,6 @@
 var http = require('http');
 var request = require('request');
 var scraperjs = require('scraperjs');
-var tmp = scraperjs.StaticScraper.create('https://www.domain.com.au/sale/mascot-nsw-2020/');
 
 var config = {
   //server : "http://localhost:8529", // local
@@ -14,10 +13,11 @@ var DEBUG = false;
 var offers = [] ;
 var source = "domain";
 
-var process = function(){
+var process = function(link, city){
+    var tmp = scraperjs.StaticScraper.create(link);
     tmp.scrape(function($) {
         //console.log($(".c-pa-info").find(".c-pa-criterion").toString());
-        $(".css-1ctih3l").map(function(el){
+        $("ul[data-testid=results] li").map(function(el){
             console.log('---Offer--');
             var offer = {};
             //console.log("in");
@@ -46,6 +46,7 @@ var process = function(){
             }
             //GUID
             offer.guid= source+":"+localId;
+            console.log(offer.guid)
             //PRICE
             var rawPrice=v.find(".css-mgq8yx").text();
             offer.price = extractPrice(rawPrice);
@@ -60,7 +61,17 @@ var process = function(){
             offer.description = "";
             features.map((i,f) =>{
               var feature = $(f).text();
-              offer.description = offer.description+ feature + " ";
+              //console.log(feature);
+              if(feature.indexOf("Bed")!=-1){
+                offer.bedNb = parseInt(feature.split(" ")[0]);
+                if(isNaN(offer.bedNb))
+                  offer.bedNb = 1;
+              }
+              if(feature.indexOf("Bath")!=-1)
+                offer.bathNb = parseInt(feature.split(" ")[0]);
+              if(feature.indexOf("Parking")!=-1)
+                offer.parkingNb = parseInt(feature.split(" ")[0]);
+              offer.description = offer.description+ feature + ",";
               //console.log(feature);
               var s = feature.split("m²");
               //console.log(s)
@@ -69,7 +80,7 @@ var process = function(){
               //console.log(t);
             })
             if(surface == 0)
-              offer.surface = "TBD";
+              offer.surface = NaN;
             else {
               offer.surface = parseInt(surface);
             }
@@ -92,17 +103,28 @@ var process = function(){
             //offer.surface=surface;
             //offer.rooms=rooms;
             offer.lastDisplayed=Date.now();
-            if(offer.price == "TBD" || offer.surface=="TBD")
-              offer.rate = "TBD";
+            //console.log(offer.surface)
+
+            //ESTIMATE
+            if(isNaN(offer.surface)){
+              console.log(offer.description)
+              //console.log(features)
+              offer.surface = 10 * offer.bathNb + 25 * offer.bedNb;
+              offer.estimate=true;
+            }else{
+              offer.estimate=false;
+            }
+            if(isNaN(offer.price))
+              offer.rate = NaN;
             else {
               offer.rate = offer.price/offer.surface;
             }
-            offer.displayed_on=Date.now();
+            //offer.displayed_on=Date.now();
 
             //OFFER
 
             offer.currency = "$";
-            offer.city = "Sydney";
+            offer.city = city;
             offer.source = source;
             console.log(offer);
 
@@ -123,7 +145,7 @@ var process = function(){
 
 }
 var putPost = function(post){
-    console.log(post.guid)
+    //console.log(post.guid)
     post._key = post.guid;
     request.patch({url:config.server+config.dbUrl+"/offers/"+post.guid,json:post},function(error,response,body){
         //console.log(title);
@@ -143,12 +165,13 @@ var normalize = function(s){
 var extractPrice = function(rawPrice){
     //console.log(rawPrice)
     var price = "";
+    rawPrice = rawPrice.replace("k","000").replace("K","000")
     var split = rawPrice.split("$");
     price = split[split.length-1]
     price = price.replace(/,/g,"").replace(" ","")
     price = parseInt(price);
     if(isNaN(price))
-      return "TBD";
+      return NaN;
     //console.log(price);
     return price;
 }
@@ -165,4 +188,14 @@ var getSurface = function(link,localId){
         console.log(description);
     })
 }
-process();
+//process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Brisbane");
+
+process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Sydney");
+process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Sydney");
+process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Sydney");
+process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Gold Coast");
+process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Gold Coast");
+process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Gold Coast");
+process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Brisbane");
+process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Brisbane");
+process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Brisbane");

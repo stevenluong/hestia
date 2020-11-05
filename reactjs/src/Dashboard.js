@@ -17,13 +17,10 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: theme.spacing(2),
-    display: 'flex',
+    //display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 150,
-  },
+  }
 }));
 
 export default function Dashboard({offers, filteredOffers, filters, setFilters, setFiltered}) {
@@ -33,17 +30,16 @@ export default function Dashboard({offers, filteredOffers, filters, setFilters, 
   return (
     <React.Fragment>
     <Grid container direction="row" spacing={3}>
-    <Grid item xs={12} md={9} lg={9}>
+    <Grid item xs={12} md={2} lg={2}>
+      <Paper className={paper}>
+        <Day />
+      </Paper>
+      <br/>
       <Paper className={paper}>
         <Filters filters={filters} setFilters={setFilters} setFiltered={setFiltered}/>
       </Paper>
     </Grid>
-    <Grid item xs={12} md={3} lg={3}>
-      <Paper className={paper}>
-        <Day />
-      </Paper>
-    </Grid>
-      <Grid item xs={12} md={12} lg={12}>
+      <Grid item xs={12} md={10} lg={10}>
         <Paper className={classes.paper}>
           <Offers offers={offers} filteredOffers={filteredOffers}/>
         </Paper>

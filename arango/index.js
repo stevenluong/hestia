@@ -26,13 +26,17 @@ const offerDocSchema = joi.object().required().keys({
 
 router.patch('/offers/:guid', function (req, res) {
   console.log(req.pathParams.guid)
-  console.log(req.body)
+  //console.log(req.body)
   var data = null;
   //const data = receiptsCollection.update(req.pathParams.key,req.body);
   if(offersCollection.exists(req.pathParams.guid))
     data = offersCollection.update(req.pathParams.guid, req.body);
-  else
+  else{
+    req.body.createdOn = new Date();
+    console.log(req.body)
     data = offersCollection.save(req.body);
+  }
+
   res.send(data)
 })
 .body(offerDocSchema, 'Offer to update in the collection.')
