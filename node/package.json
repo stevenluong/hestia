@@ -7,15 +7,19 @@
         "angular-chart.js": "*",
         "bower": "*",
         "connect": "*",
+        "cron": "*",
         "express": "*",
         "feedparser": "*",
         "forever": "*",
         "http-server": "*",
+        "puppeteer": "^5.4.1",
+        "puppeteer-core": "^5.4.1",
+        "puppeteer-extra": "^3.1.15",
+        "puppeteer-extra-plugin-stealth": "^2.6.5",
         "querystring": "*",
         "request": "*",
         "scraperjs": "*",
         "socket.io": "*",
-        "cron": "*",
         "socket.io-client": "*"
     }
 }

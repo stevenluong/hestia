@@ -42,7 +42,7 @@ export default function Offers({offers, filteredOffers}) {
               <TableCell><Link href={o.link}>{o.guid} </Link></TableCell>
               <TableCell>{o.city},<small>{o.source=="domain"?o.location.split(",")[1]:o.location}</small> </TableCell>
               <TableCell style={o.price<200000?{color:'green'}:{}}>{o.price}{o.currency}</TableCell>
-              <TableCell style={o.estimate?{color:'yellow'}:{}}>{o.surface}m²</TableCell>
+              <TableCell style={o.estimate?{fontSize:'small',fontStyle:'italic'}:{}}>{o.surface}m²</TableCell>
               <TableCell>{isNaN(o.rate)?"":parseInt(o.rate)}{o.currency}/m²</TableCell>
               <Hidden xlDown>
               <TableCell>X{o.currency}/month</TableCell>

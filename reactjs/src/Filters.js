@@ -42,19 +42,21 @@ export default function Filters({filters, setFilters, setFiltered}) {
   return (
     <React.Fragment>
       <Title>Filters</Title>
-      <p>
       Cities: <br/>
+      <div>
       {filters.cities.map((c,i) => (
         <React.Fragment key={i}>
         <Checkbox
         checked={c.selected}
         color="primary"
+        size="small"
         onChange={(e)=> handleCitiesFilterChange(e,c)}
       />
-        {c.name} <br/>
+        {c.name}
+        <br/>
         </React.Fragment>
       ))}
-      </p>
+      </div>
       <Button color="primary" variant="outlined" href="#" onClick={handleReset}>
         Reset
       </Button>
