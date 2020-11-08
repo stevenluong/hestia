@@ -36,16 +36,15 @@ const options = {
 const source = "realestate";
 const website = "https://www.realestate.com.au";
 async function process(link, city) {
-  //console.log("TEST");
+  console.log("TEST");
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
+  //page.on('console', msg => console.log('PAGE LOG:', msg.text()));
   //await page.setRequestInterception(true);
   //const c = city;
   //const s = source;
   await page.goto(link, {waitUntil: 'networkidle2'});
   //await page.screenshot({path: 'example.png'});
-  page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-
   const offers = await page.evaluate((source,city,website)=>{
     //debugger;
     //console.log(`url is ${location.href}`)
@@ -87,7 +86,7 @@ async function process(link, city) {
       }else{
         return
       }
-      console.log(offer.price);
+      //console.log(offer.price);
 
       //ADDRESS
       var addressQ = o.querySelector(".residential-card__address-heading")
@@ -152,7 +151,8 @@ async function process(link, city) {
     return offers;
   },source,city,website);
   await browser.close();
-  console.log(offers);
+  //console.log(offers);
+  console.log(offers.length);
   offers.forEach(o=>{
     putPost(o);
   })
