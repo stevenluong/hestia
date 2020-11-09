@@ -29,7 +29,7 @@ const options = {
         //userDataDir: './tmp',
         //slowMo:500,
         //devtools:true,
-        executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+        //executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
     };
 
 //const source = "realestate";
