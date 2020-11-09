@@ -29,7 +29,7 @@ const options = {
         //userDataDir: './tmp',
         //slowMo:500,
         //devtools:true,
-        //executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+        executablePath:'/home/stevenluong/hestia/node/node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
     };
 
 //const source = "realestate";

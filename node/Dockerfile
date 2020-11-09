@@ -1,6 +1,6 @@
 FROM node:latest
 RUN mkdir /node
 WORKDIR /node
-ADD package.json /node/package.json
-RUN npm install
-RUN npm install cron
+#ADD package.json /node/package.json
+#RUN npm install
+#RUN npm install cron
