@@ -9,25 +9,24 @@ var config = {
   dbUrl : "/_db/production/hestia"
 }
 
-
-
-
-
-
 var DEBUG = false;
 var offers = [] ;
-var source = "domain";
+var source = "realestate";
 
 var process = function(link, city){
     var tmp = scraperjs.StaticScraper.create(link);
+    //console.log(link);
+    tmp.catch((error,utils)=>{
+      console.log(error);
+    })
     tmp.scrape(function($) {
-        //console.log($("ul[data-testid=results] li"));
-        $("ul[data-testid=results] li").map(function(el){
+        console.log($("html"));
+        $("div.tiered-results.tiered-results--exact div").map(function(el){
             console.log('---Offer--');
             var offer = {};
             //console.log("in");
             //TODO - Get all links
-
+            /*
             var v = $(this);
 
             //var description="";
@@ -131,7 +130,7 @@ var process = function(link, city){
             offer.currency = "$";
             offer.city = city;
             offer.source = source;
-            //console.log(offer);
+            console.log(offer);
 
             //FILTER OUT
             if(offer.link==undefined){
@@ -141,8 +140,9 @@ var process = function(link, city){
             else{
                 //console.log(offer);
                 //offers.push(offer);
-                putPost(offer);
+                //putPost(offer);
             }
+            */
 
         })
 
@@ -195,34 +195,4 @@ var getSurface = function(link,localId){
 }
 //process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Brisbane");
 
-process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Sydney");
-process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Sydney");
-process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Sydney");
-
-process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Gold Coast");
-process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Gold Coast");
-process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Gold Coast");
-
-process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Brisbane");
-process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Brisbane");
-process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Brisbane");
-
-//CRON
-var CronJob = require('cron').CronJob;
-var cronJob = new CronJob({
-    cronTime: '0 30 8 * * *',
-    onTick: function() {
-      process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Sydney");
-      process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Sydney");
-      process('https://www.domain.com.au/sale/mascot-nsw-2020/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Sydney");
-
-      process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Gold Coast");
-      process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Gold Coast");
-      process('https://www.domain.com.au/sale/gold-coast-qld/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Gold Coast");
-      
-      process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Brisbane");
-      process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=2',"Brisbane");
-      process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc&page=3',"Brisbane");
-    }
-});
-cronJob.start();
+process('https://www.realestate.com.au/buy/between-100000-500000-in-brisbane+-+greater+region,+qld/list-1',"Brisbane");

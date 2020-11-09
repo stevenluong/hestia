@@ -193,3 +193,24 @@ const putPost = function(post){
         }
     })
 }
+
+
+//CRON
+var CronJob = require('cron').CronJob;
+var cronJob = new CronJob({
+    cronTime: '0 30 8 * * *',
+    onTick: function() {
+      process(website+'/buy/between-100000-500000-in-gold+coast/list-1','Gold Coast');
+      process(website+'/buy/between-100000-500000-in-gold+coast/list-2','Gold Coast');
+      process(website+'/buy/between-100000-500000-in-gold+coast/list-3','Gold Coast');
+
+      process(website+'/buy/in-brisbane+-+greater+region,+qld/list-1','Brisbane');
+      process(website+'/buy/in-brisbane+-+greater+region,+qld/list-2','Brisbane');
+      process(website+'/buy/in-brisbane+-+greater+region,+qld/list-3','Brisbane');
+
+      process(website+'/buy/in-mascot,+nsw+2020/list-1','Mascot');
+      process(website+'/buy/in-mascot,+nsw+2020/list-2','Mascot');
+      process(website+'/buy/in-mascot,+nsw+2020/list-3','Mascot');
+    }
+});
+cronJob.start();
