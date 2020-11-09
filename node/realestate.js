@@ -1,7 +1,7 @@
-var http = require('http');
-var request = require('request');
-var scraperjs = require('scraperjs');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 
+var request = require('request');
 var config = {
   //server : "http://localhost:8529", // local
   server : "https://athena.slapps.fr",
@@ -9,147 +9,176 @@ var config = {
   dbUrl : "/_db/production/hestia"
 }
 
-var DEBUG = false;
-var offers = [] ;
-var source = "realestate";
 
-var process = function(link, city){
-    var tmp = scraperjs.StaticScraper.create(link);
-    //console.log(link);
-    tmp.catch((error,utils)=>{
-      console.log(error);
+puppeteer.use(StealthPlugin())
+/*
+const args = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-infobars',
+        '--window-position=0,0',
+        '--ignore-certifcate-errors',
+        '--ignore-certifcate-errors-spki-list',
+        '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.0183 Safari/537.36"'
+    ];
+*/
+const options = {
+        //args,
+        //headless: false,
+        //ignoreHTTPSErrors: true,
+        //userDataDir: './tmp',
+        //slowMo:500,
+        //devtools:true,
+        executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    };
+
+//const source = "realestate";
+const source = "realestate";
+const website = "https://www.realestate.com.au";
+const process = async function(link,city){
+  console.log("TEST");
+  const browser = await puppeteer.launch(options);
+  const page = await browser.newPage();
+  page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+  //await page.setRequestInterception(true);
+  //const link = website+'/buy/between-100000-500000-in-gold+coast/list-1';
+  //const city = "Gold Coast";
+  //const c = city;
+  //const s = source;
+  await page.goto(link, {waitUntil: 'networkidle2',timeout:0});
+  //await page.goto(link);
+  const offers = await page.evaluate((source,city,website)=>{
+    //debugger;
+    //console.log(`url is ${location.href}`)
+    var offers = [];
+    var offersQ = document.querySelectorAll('article');
+    offersQ.forEach(o=>{
+      //console.log('---Offer--');
+      var offer = {};
+      //LINK
+      var linkQ = o.querySelector(".details-link")
+      offer.link = "";
+      if(linkQ)
+        offer.link = website+linkQ.getAttribute('href');
+      //console.log(offer.link);
+      //ID
+      var localId = "";
+      //offer.link=v.find(".address").attr("href");
+      //if(offer.link!=undefined){
+      var localIdSplit = offer.link.split("-");
+      localId=localIdSplit[localIdSplit.length-1]
+      localId = localId.split("?")[0]
+      //}else{
+      //    //IF NO LINK, THEN SKIP
+      //    return;
+      //}
+      //GUID
+      offer.guid= source+":"+localId;
+      //console.log(offer.guid)
+      //PRICE
+      var priceQ = o.querySelector(".property-price")
+      offer.price = NaN;
+      if(priceQ)
+        offer.price = priceQ.innerText.trim();
+      else
+        return
+      if(offer.price.indexOf("$")!=-1 && offer.price.indexOf(",")!=-1){
+        console.log(offer.price.replace(/,/g,""));
+        console.log(offer.price.replace(/,/g,"").split("$")[1]);
+        offer.price = offer.price.replace(/,/g,"").split("$")[1].split(" ")[0];
+        offer.price = parseInt(offer.price);
+      }else{
+        return
+      }
+      //console.log(offer.price);
+
+      //ADDRESS
+      var addressQ = o.querySelector(".residential-card__address-heading")
+      offer.location = "";
+      if(addressQ)
+        offer.location = addressQ.innerText.trim();
+      //console.log(offer.address);
+
+
+      //Bed Nb
+      var bedQ = o.querySelector(".general-features__icon.general-features__beds")
+      offer.bedNb = NaN;
+      if(bedQ)
+        offer.bedNb = bedQ.innerText.trim();
+      //console.log(offer.bedNb);
+
+      //Bath Nb
+      var bathQ = o.querySelector(".general-features__icon.general-features__baths")
+      offer.bathNb = NaN;
+      if(bathQ)
+        offer.bathNb = bathQ.innerText.trim();
+      //console.log(offer.bathNb);
+
+      //Parking Nb
+      var parkingQ = o.querySelector(".general-features__icon.general-features__cars")
+      offer.parkingNb = NaN;
+      if(parkingQ)
+        offer.parkingNb = parkingQ.innerText.trim();
+      //console.log(offer.parkingNb);
+
+      //SURFACE
+      var surfaceQ = o.querySelector(".general-features__icon.general-features__land")
+      offer.surface = NaN;
+      if(surfaceQ)
+        offer.surface = surfaceQ.innerText.trim();
+
+
+      if(isNaN(offer.surface)){
+        offer.estimate = true;
+        offer.surface = offer.bedNb * 25 + offer.bathNb * 10;
+      }else{
+        offer.estimate = false;
+      }
+      //console.log(offer.surface);
+      //RATE
+      offer.rate = offer.price/offer.surface;
+
+      offer.currency = "$";
+      offer.city = city;
+      offer.source = source;
+      //console.log(offer);
+
+      //PUSH TO LOOPBACK
+
+          //console.log(offer);
+          //offers.push(offer);
+      //putPost(offer);
+      offers.push(offer);
+
+      console.log(offer);
     })
-    tmp.scrape(function($) {
-        console.log($("html"));
-        $("div.tiered-results.tiered-results--exact div").map(function(el){
-            console.log('---Offer--');
-            var offer = {};
-            //console.log("in");
-            //TODO - Get all links
-            /*
-            var v = $(this);
+    return offers;
+  },source,city,website);
+  //console.log(offers);
+  //console.log(offers.length);
+  offers.forEach(o=>{
+    putPost(o);
+  })
 
-            //var description="";
-            offer.image=v.find("img").attr("src");
-            //var rooms=0;
-            //console.log($(this));
+  await browser.close();
 
-            offer.location = v.find(".css-bqbbuf").text().substring(0,100);
-
-            //LOCALID
-            //LINK
-            var localId = "";
-            offer.link=v.find(".address").attr("href");
-            if(offer.link!=undefined){
-                var localIdSplit = offer.link.split("-");
-                localId=localIdSplit[localIdSplit.length-1]
-                localId = localId.split("?")[0]
-            }else{
-                //IF NO LINK, THEN SKIP
-                return;
-            }
-            //GUID
-            offer.guid= source+":"+localId;
-            console.log(offer.guid)
-            //PRICE
-            var rawPrice=v.find(".css-mgq8yx").text();
-            offer.price = extractPrice(rawPrice);
-
-            //ROOMS
-            //rooms = v.find("[data-testid*=property-features-text-container]").text();
-
-            //DESCRIPTION
-            //SURFACE
-            var surface = 0;
-            var features = v.find(".css-1rzse3v");
-            offer.description = "";
-            features.map((i,f) =>{
-              var feature = $(f).text();
-              //console.log(feature);
-              if(feature.indexOf("Bed")!=-1){
-                offer.bedNb = parseInt(feature.split(" ")[0]);
-                if(isNaN(offer.bedNb))
-                  offer.bedNb = 1;
-              }
-              if(feature.indexOf("Bath")!=-1)
-                offer.bathNb = parseInt(feature.split(" ")[0]);
-              if(feature.indexOf("Parking")!=-1)
-                offer.parkingNb = parseInt(feature.split(" ")[0]);
-              offer.description = offer.description+ feature + ",";
-              //console.log(feature);
-              var s = feature.split("m²");
-              //console.log(s)
-              if(s.length > 1)
-                surface = s[0];
-              //console.log(t);
-            })
-            if(surface == 0)
-              offer.surface = NaN;
-            else {
-              offer.surface = parseInt(surface);
-            }
-            //surface = getSurface(link, localId);
-            //surface = parseInt(rooms[0])*30;
-            //console.log(rooms);
-            //console.log(surface);
-            //console.log(rawPrice.indexOf("$"));
-            //If NO PRICE, THEN SKIP
-            //if(rawPrice.indexOf("$")==-1)
-            //    return;
-            //console.log(rawPrice);
+};
 
 
-            //MAP TO MODEL
 
-            //offer.description=description;
-            offer.locationCoord={lat:0,lng:0};
+process(website+'/buy/between-100000-500000-in-gold+coast/list-1','Gold Coast');
+process(website+'/buy/between-100000-500000-in-gold+coast/list-2','Gold Coast');
+process(website+'/buy/between-100000-500000-in-gold+coast/list-3','Gold Coast');
 
-            //offer.surface=surface;
-            //offer.rooms=rooms;
-            offer.lastDisplayed=Date.now();
-            //console.log(offer.surface)
+process(website+'/buy/in-brisbane+-+greater+region,+qld/list-1','Brisbane');
+process(website+'/buy/in-brisbane+-+greater+region,+qld/list-2','Brisbane');
+process(website+'/buy/in-brisbane+-+greater+region,+qld/list-3','Brisbane');
 
-            //ESTIMATE
-            if(isNaN(offer.surface)){
-              console.log(offer.description)
-              //console.log(features)
-              offer.surface = 10 * offer.bathNb + 25 * offer.bedNb;
-              offer.estimate=true;
-            }else{
-              offer.estimate=false;
-            }
-            if(isNaN(offer.price))
-              offer.rate = NaN;
-            else {
-              offer.rate = offer.price/offer.surface;
-            }
-            //offer.displayed_on=Date.now();
+process(website+'/buy/in-mascot,+nsw+2020/list-1','Mascot');
+process(website+'/buy/in-mascot,+nsw+2020/list-2','Mascot');
+process(website+'/buy/in-mascot,+nsw+2020/list-3','Mascot');
 
-            //OFFER
-
-            offer.currency = "$";
-            offer.city = city;
-            offer.source = source;
-            console.log(offer);
-
-            //FILTER OUT
-            if(offer.link==undefined){
-                console.log("UNPARSABLE")
-            }
-            //PUSH TO LOOPBACK
-            else{
-                //console.log(offer);
-                //offers.push(offer);
-                //putPost(offer);
-            }
-            */
-
-        })
-
-    })
-
-}
-var putPost = function(post){
+const putPost = function(post){
     //console.log(post.guid)
     post._key = post.guid;
     request.patch({url:config.server+config.dbUrl+"/offers/"+post.guid,json:post},function(error,response,body){
@@ -164,35 +193,3 @@ var putPost = function(post){
         }
     })
 }
-var normalize = function(s){
-    return s.replace(/\s+/g, ' ');
-}
-var extractPrice = function(rawPrice){
-    //console.log(rawPrice)
-    var price = "";
-    rawPrice = rawPrice.replace("k","000").replace("K","000")
-    var split = rawPrice.split("$");
-    price = split[split.length-1]
-    price = price.replace(/,/g,"").replace(" ","")
-    price = parseInt(price);
-    if(isNaN(price))
-      return NaN;
-    //console.log(price);
-    return price;
-}
-var getSurface = function(link,localId){
-
-    var l = scraperjs.StaticScraper.create(link);
-
-    l.scrape(function($) {
-        return $(".listing-details__description").map(function() {
-            return $(this).text();
-        }).get();
-    })
-    .then(function(description) {
-        console.log(description);
-    })
-}
-//process('https://www.domain.com.au/sale/brisbane-city-qld-4000/?price=100000-500000&excludeunderoffer=1&sort=price-asc',"Brisbane");
-
-process('https://www.realestate.com.au/buy/between-100000-500000-in-brisbane+-+greater+region,+qld/list-1',"Brisbane");
