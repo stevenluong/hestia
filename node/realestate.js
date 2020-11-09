@@ -29,6 +29,7 @@ const options = {
         //userDataDir: './tmp',
         //slowMo:500,
         //devtools:true,
+        //executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         executablePath:'/home/stevenluong/hestia/node/node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
     };
 
@@ -83,8 +84,8 @@ const process = async function(link,city){
       else
         return
       if(offer.price.indexOf("$")!=-1 && offer.price.indexOf(",")!=-1){
-        console.log(offer.price.replace(/,/g,""));
-        console.log(offer.price.replace(/,/g,"").split("$")[1]);
+        //console.log(offer.price.replace(/,/g,""));
+        //console.log(offer.price.replace(/,/g,"").split("$")[1]);
         offer.price = offer.price.replace(/,/g,"").split("$")[1].split(" ")[0];
         offer.price = parseInt(offer.price);
       }else{
@@ -141,6 +142,7 @@ const process = async function(link,city){
       offer.currency = "$";
       offer.city = city;
       offer.source = source;
+      offer.lastDisplayed=Date.now();
       //console.log(offer);
 
       //PUSH TO LOOPBACK
@@ -150,7 +152,7 @@ const process = async function(link,city){
       //putPost(offer);
       offers.push(offer);
 
-      console.log(offer);
+      //console.log(offer);
     })
     return offers;
   },source,city,website);

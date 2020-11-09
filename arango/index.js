@@ -18,7 +18,7 @@ const errors = require('@arangodb').errors;
 const offersCollection = db._collection('offers');
 const DOC_NOT_FOUND = errors.ERROR_ARANGO_DOCUMENT_NOT_FOUND.code;
 
-// RECEIPTS ----------------------------------------------------------------
+
 // store schema in variable to make it re-usable, see .body()
 const offerDocSchema = joi.object().required().keys({
   link: joi.string()
@@ -69,9 +69,24 @@ router.post('/offers', function (req, res) {
 .summary('Store offers')
 .description('Store offers');
 
+/*
 router.get('/offers', function (req, res) {
   const offers = db._query(aql`
     FOR asset IN ${offersCollection}
+    RETURN asset
+  `);
+  res.send(offers);
+})
+.response(joi.array().items(
+  joi.string().required()
+).required(), 'List of offers.')
+.summary('List Offers')
+.description('List Offers');
+*/
+router.get('/offers', function (req, res) {
+  const offers = db._query(aql`
+    FOR asset IN ${offersCollection}
+    FILTER DATE_TIMESTAMP(asset.lastDisplayed) > DATE_TIMESTAMP(DATE_SUBTRACT(DATE_NOW(),1,"day")) AND DATE_TIMESTAMP(asset.lastDisplayed) < DATE_TIMESTAMP(DATE_NOW())
     RETURN asset
   `);
   res.send(offers);
