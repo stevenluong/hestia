@@ -1,13 +1,19 @@
 import React from 'react';
 import Title from './Title';
-import Link from '@material-ui/core/Link';
+//import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
+//import IconButton from '@material-ui/core/IconButton';
+//import AddIcon from '@material-ui/icons/Add';
+//import RemoveIcon from '@material-ui/icons/Remove';
 import Checkbox from '@material-ui/core/Checkbox';
+//REDUX
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-export default function Filters({filters, setFilters, setFiltered}) {
+export default function Filters() {
+  const dispatch = useDispatch()
+  const selectFilters = state => state.filters;
+  const reduxFilters = useSelector(selectFilters);
   //var filters = [];
   //const [citiesFilter, setCitiesFilter] = React.useState(filters.cities);
   //setCitiesFilter(filters.cities);
@@ -17,37 +23,40 @@ export default function Filters({filters, setFilters, setFiltered}) {
     //var f = filters;
     //console.log(k);
     //var f = Object.assign(filters, {keywords:[...filters.keywords,k]})
-    var f = {};//Object.assign(filters, {keywords:[],noKeywords:[]})
-    setFilters(f);
-    setFiltered(false);
+    //var f = {};//Object.assign(filters, {keywords:[],noKeywords:[]})
+    //setFilters(f);
+    //setFiltered(false);
+    dispatch({type:'filters/citiesReset'})
   }
   const handleCitiesFilterChange = (e,c) => {
-    console.log(c);
+    //console.log(c);
 
     //var f = filters;
     //console.log(k);
-    var cities = filters.cities;
-    cities.forEach(city => {
-      if(city.name === c.name)
-        city.selected = e.target.checked;
-    })
-    var f = {};
+    //var cities = filters.cities;
+    //cities.forEach(city => {
+    //  if(city.name === c.name)
+    //    city.selected = e.target.checked;
+    //})
+    //var f = {};
     //{cities:cities}//= Object.assign(filters, {cities:cities})
     //setCitiesFilter(cities);
-    console.log(f);
+    //console.log(f);
     //var f = {};//Object.assign(filters, {keywords:[],noKeywords:[]})
-    setFilters(Object.assign(f, {cities:cities}));
-    setFiltered(false);
+    //setFilters(Object.assign(f, {cities:cities}));
+    //setFiltered(false);
+    dispatch({type:'filters/cityToggled',payload:c.name})
   }
   return (
     <React.Fragment>
       <Title>Filters</Title>
       Cities: <br/>
       <div>
-      {filters.cities.map((c,i) => (
+      {reduxFilters.cities.map((c,i) => (
         <React.Fragment key={i}>
         <Checkbox
         checked={c.selected}
+        style={{height:25, width:25}}
         color="primary"
         size="small"
         onChange={(e)=> handleCitiesFilterChange(e,c)}

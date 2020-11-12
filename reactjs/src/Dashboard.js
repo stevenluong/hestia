@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function Dashboard({offers, filteredOffers, filters, setFilters, setFiltered}) {
+export default function Dashboard() {
   const classes = useStyles();
   const paper = clsx(classes.paper);
 
@@ -36,12 +36,12 @@ export default function Dashboard({offers, filteredOffers, filters, setFilters, 
       </Paper>
       <br/>
       <Paper className={paper}>
-        <Filters filters={filters} setFilters={setFilters} setFiltered={setFiltered}/>
+        <Filters/>
       </Paper>
     </Grid>
       <Grid item xs={12} md={10} lg={10}>
         <Paper className={classes.paper}>
-          <Offers offers={offers} filteredOffers={filteredOffers}/>
+          <Offers/>
         </Paper>
       </Grid>
 

@@ -24,11 +24,11 @@ const helpers = {
 
     getUser:function (user,cb){
       var q = config.server+config.usersUrl+"/users/"+user.sub
-      console.log(q)
+      //console.log(q)
       fetch(q)
           .then(result=>result.json())
           .then(u=>{
-              if(u.length==0){
+              if(u.length===0){
                 console.log(user)
                 this.createUser(user, cb);
               }

@@ -19,6 +19,9 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import { useOktaAuth } from '@okta/okta-react';
 import { Link as RouterLink, Redirect } from 'react-router-dom';
 import logo from './Common/logo.png';
+//REDUX
+//import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import Profile from './User/Profile';
 import Dashboard from './Dashboard';
@@ -26,15 +29,15 @@ import Dashboard from './Dashboard';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
+//import ListSubheader from '@material-ui/core/ListSubheader';
 import PersonIcon from '@material-ui/icons/Person';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import TripOriginIcon from '@material-ui/icons/TripOrigin';
+//import TripOriginIcon from '@material-ui/icons/TripOrigin';
 import LayersIcon from '@material-ui/icons/Layers';
-import BookmarkIcon from '@material-ui/icons/Bookmark';
+//import BookmarkIcon from '@material-ui/icons/Bookmark';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 
-import moment from 'moment';
+//import moment from 'moment';
 import usersHelpers from './User/helpers';
 
 var config = {
@@ -45,9 +48,9 @@ var config = {
   usersUrl : "/_db/production/athena"
 }
 
-function getOffers(setOffers, cbCities){
+function getOffers(cbOffers, cbCities){
   var q = config.server+config.dbUrl+"/offers"
-  console.log(q)
+  //console.log(q)
   fetch(q)
       .then(result=>result.json())
       .then(offers=>{
@@ -55,7 +58,7 @@ function getOffers(setOffers, cbCities){
           //console.log(offers);
           var filteredOffers = [];
           offers.forEach((o, i) => {
-            if(cities.indexOf(o.city)==-1)
+            if(cities.indexOf(o.city)===-1)
               cities.push(o.city);
             //o.lastDisplayed = moment(o.lastDisplayed).format("DD/MM/YYYY");
             if((!o.price||isNaN(o.price))&&(!o.surface||isNaN(o.surface)))
@@ -73,8 +76,8 @@ function getOffers(setOffers, cbCities){
             //if(o.price !== "TBD" && o.surface !== "TBD")
             filteredOffers.push(o)
           });
-          console.log(filteredOffers);
-          setOffers(filteredOffers);
+          //console.log(filteredOffers);
+          cbOffers(filteredOffers);
           cbCities(cities);
       });
 }
@@ -167,27 +170,39 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Main({url}) {
+export default function Main({page}) {
   const { authState, authService } = useOktaAuth();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [userRequested, setUserRequested] = React.useState(false);
-  const [user, setUser] = React.useState({_key:0});
-  const [offers, setOffers] = React.useState([])
+  //const [userRequested, setUserRequested] = React.useState(false);
+  //const [user, setUser] = React.useState({_key:0});
+  //const [offers, setOffers] = React.useState([])
   //const [cities, setCities] = React.useState([])
-  const [filtered, setFiltered] = React.useState(true)
-  const [filteredOffers, setFilteredOffers] = React.useState([])
-  const [filters, setFilters] = React.useState({
-    //price: 1000000,
-    //surface: 1000,
-    cities:[]
-  })
+  //const [filtered, setFiltered] = React.useState(true)
+  //const [filteredOffers, setFilteredOffers] = React.useState([])
+  //const [filters, setFilters] = React.useState({
+  //  //price: 1000000,
+  //  //surface: 1000,
+  //  cities:[]
+  //})
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  //REDUX
+  const dispatch = useDispatch()
+  //const selectUser = state => state.user;
+  //const reduxUser = useSelector(selectUser);
+  //const selectOffers = state => state.offers;
+  //const reduxOffers = useSelector(selectOffers);
+  //const selectFilters = state => state.filters;
+  //const reduxFilters = useSelector(selectFilters);
+
+
+  //console.log(reduxOffers);
   //const handleSet = (f) => {
   //  console.log("TEST")
   //  setFilters(f);
@@ -208,17 +223,19 @@ export default function Main({url}) {
     return(
       <Redirect to={{ pathname: '/login' }}/>
     )
-    if(!userRequested){
-      setUserRequested(true);
+    //if(!userRequested){
+    //  setUserRequested(true);
       authService.getUser().then((info) => {
         //setUserInfo(info);
         //console.log(info);
         usersHelpers.getUser(info, (u)=>{
-          console.log(u)
-          setUser(u)
+          //console.log(u)
+          //setUser(u)
+          dispatch({type:'user/retrieved',payload:u})
           getOffers((o)=>{
-            setOffers(o);
-            setFilteredOffers(o);
+            //setOffers(o);
+            //setFilteredOffers(o);
+            dispatch({ type: 'offers/offersRetrieved', payload: o })
           }, (c)=>{
             //console.log(c);
             //setCities(c);
@@ -226,34 +243,37 @@ export default function Main({url}) {
             c.forEach((city, i) => {
               cities.push({name:city, selected:true})
             });
-            console.log(cities);
-            setFilters(Object.assign(filters,{cities:cities}))
+            //console.log(cities);
+            //setFilters(Object.assign(filters,{cities:cities}))
+            dispatch({type:'filters/citiesAdded',payload:cities})
           });
         });
         //setUser(info)
       });
-    }
+    //}
+
+
   //console.log(filteredNews);
-  if(!filtered){
-    setFiltered(true);
-    console.log(filters);
-    var t = [];
-    offers.forEach(o=>{
-      filters.cities.forEach(c=>{
-        if(c.selected && o.city === c.name)
-          t.push(o);
-      })
-    })
-    setFilteredOffers(t);
+  //if(!filtered){
+  //  setFiltered(true);
+  //  console.log(filters);
+  //  var t = [];
+  //  reduxOffers.forEach(o=>{
+  //    filters.cities.forEach(c=>{
+  //      if(c.selected && o.city === c.name)
+  //        t.push(o);
+  //    })
+  //  })
+    //setFilteredOffers(t);
     //console.log(cities);
-  }
+  //}
 
   //console.log(url)
   var content = null;
-  if(url==="profile")
-    content = <Profile user={user} />
-  if(url==="dashboard")
-    content = <Dashboard offers={offers} filteredOffers={filteredOffers} setFilters={setFilters} filters={filters} setFiltered={setFiltered}/>
+  if(page==="profile")
+    content = <Profile/>
+  if(page==="dashboard")
+    content = <Dashboard/>
 
   //console.log(fetch);
   return (

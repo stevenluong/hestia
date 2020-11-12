@@ -26,9 +26,9 @@ export default function Profile({user,setUser}) {
 
   const [edit, setEdit] = React.useState(false);
   //console.log(fetch);
-  const handleEmailChange = (e) => {
-    setUser({...user, email:e.target.value});
-  };
+  //const handleEmailChange = (e) => {
+  //  setUser({...user, email:e.target.value});
+  //};
   const handleBirthdateChange = (e) => {
     setUser({...user, birthdate:e.target.value});
   };

@@ -21,11 +21,11 @@ const AppWithRouterAccess = () => {
               onAuthRequired={onAuthRequired}
               pkce={true} >
       <Switch>
-        <SecureRoute path='/' exact={true} render={() => <Main url="dashboard" />} />
+        <SecureRoute path='/' exact={true} render={() => <Main page="dashboard" />} />
         <Route path='/login' render={() => <SignInSide baseUrl={config.url} />} />
         <Route path='/signup' render={() => <SignUp baseUrl={config.url} />} />
         <Route path='/implicit/callback' component={LoginCallback} />
-        <SecureRoute path='/profile' render={() => <Main url="profile" />} />
+        <SecureRoute path='/profile' render={() => <Main page="profile" />} />
         <Route component={Notfound} />
       </Switch>
     </Security>

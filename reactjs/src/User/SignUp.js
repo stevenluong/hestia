@@ -50,7 +50,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SignUp = ({baseUrl}) => {
-  const { authState, authService } = useOktaAuth();
+  //const { authState, authService } = useOktaAuth();
+  const { authService } = useOktaAuth();
   const classes = useStyles();
   const [error, setError] = React.useState(null);
   const [email, setEmail] = React.useState('');
@@ -100,9 +101,9 @@ const SignUp = ({baseUrl}) => {
   const handleLastNameChange = (e) => {
     setLastName(e.target.value);
   };
-  const handleCountryChange = (e) => {
-    setCountry(e.target.value);
-  };
+  //const handleCountryChange = (e) => {
+  //  setCountry(e.target.value);
+  //};
   const errorMessage = error ? (
         <Alert severity="error">{error}</Alert>
       ) : null;
