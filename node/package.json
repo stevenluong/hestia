@@ -7,7 +7,7 @@
         "angular-chart.js": "*",
         "bower": "*",
         "connect": "*",
-        "cron": "*",
+        "cron": "^1.8.2",
         "express": "*",
         "feedparser": "*",
         "forever": "*",

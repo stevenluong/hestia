@@ -2,12 +2,36 @@ version: '2'
 services:
     reactjs:
         build: reactjs/.
-        command: http-server ./build/. -p 80
-        depends_on:
-            - loopback
-        #ports:
-        #    - "8001:80"
+        command: serve -s ./build/. -p 80
         volumes:
             - ./reactjs/:/reactjs
             - /reactjs/node_modules
+        mem_limit: 64m
         restart: always
+        networks:
+            - nginx_default
+    node-dom:
+        build: node/.
+        command: node domain.js
+        mem_limit: 64m
+        volumes:
+            - ./node/:/node
+            - ./node/node_modules/:/node/node_modules
+        restart: always
+        networks:
+            - nginx_default
+    node-real:
+        build: node/.
+        command: node realestate.js
+        mem_limit: 64m
+        volumes:
+            - ./node/:/node
+            - ./node/node_modules/:/node/node_modules
+        restart: always
+        networks:
+            - nginx_default
+
+
+networks:
+    nginx_default:
+        external: true
