@@ -170,7 +170,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Main({page}) {
+export default function Main({page,publicUser}) {
   const { authState, authService } = useOktaAuth();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -330,6 +330,8 @@ export default function Main({page}) {
         </div>
         </List>
         <Divider />
+        {!publicUser?(
+          <>
         <List>
         <div>
           <ListItem button component={RouterLink} to="/profile">
@@ -351,6 +353,8 @@ export default function Main({page}) {
           </ListItem>
         </div>
         </List>
+        </>
+      ):(<></>)}
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

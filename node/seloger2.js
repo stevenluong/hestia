@@ -11,7 +11,7 @@ var config = {
 
 
 puppeteer.use(StealthPlugin())
-/*
+
 const args = [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -21,22 +21,22 @@ const args = [
         '--ignore-certifcate-errors-spki-list',
         '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.0183 Safari/537.36"'
     ];
-*/
+
 const options = {
-        //args,
+        args,
         //headless: false,
         //ignoreHTTPSErrors: true,
         //userDataDir: './tmp',
-        //slowMo:500,
-        //devtools:true,
+        slowMo:2000,
+        devtools:true,
         executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         //executablePath:'./node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
         //executablePath:'./node_modules/puppeteer/.local-chromium/mac-809590/chrome-mac/Chromium.app'
     };
 
 //const source = "realestate";
-const source = "realestate";
-const website = "https://www.realestate.com.au";
+const source = "seloger";
+const website = "https://www.seloger.com";
 const process = async function(link,city){
   console.log("TEST");
   const browser = await puppeteer.launch(options);
@@ -160,7 +160,7 @@ const process = async function(link,city){
   //console.log(offers);
   //console.log(offers.length);
   offers.forEach(o=>{
-    putPost(o);
+    //putPost(o);
   })
 
   await browser.close();
@@ -169,7 +169,7 @@ const process = async function(link,city){
 
 
 
-process(website+'/buy/between-100000-500000-in-gold+coast/list-1','Gold Coast');
+process(website+'/immobilier/achat/immo-paris-75/bien-appartement/','Paris');
 //process(website+'/buy/between-100000-500000-in-gold+coast/list-2','Gold Coast');
 //process(website+'/buy/between-100000-500000-in-gold+coast/list-3','Gold Coast');
 
@@ -203,17 +203,17 @@ var CronJob = require('cron').CronJob;
 var cronJob = new CronJob({
     cronTime: '0 30 8 * * *',
     onTick: function() {
-      process(website+'/buy/between-100000-500000-in-gold+coast/list-1','Gold Coast');
-      process(website+'/buy/between-100000-500000-in-gold+coast/list-2','Gold Coast');
-      process(website+'/buy/between-100000-500000-in-gold+coast/list-3','Gold Coast');
+      //process(website+'/buy/between-100000-500000-in-gold+coast/list-1','Gold Coast');
+      //process(website+'/buy/between-100000-500000-in-gold+coast/list-2','Gold Coast');
+      //process(website+'/buy/between-100000-500000-in-gold+coast/list-3','Gold Coast');
 
-      process(website+'/buy/in-brisbane+-+greater+region,+qld/list-1','Brisbane');
-      process(website+'/buy/in-brisbane+-+greater+region,+qld/list-2','Brisbane');
-      process(website+'/buy/in-brisbane+-+greater+region,+qld/list-3','Brisbane');
+      //process(website+'/buy/in-brisbane+-+greater+region,+qld/list-1','Brisbane');
+      //process(website+'/buy/in-brisbane+-+greater+region,+qld/list-2','Brisbane');
+      //process(website+'/buy/in-brisbane+-+greater+region,+qld/list-3','Brisbane');
 
-      process(website+'/buy/in-mascot,+nsw+2020/list-1','Mascot');
-      process(website+'/buy/in-mascot,+nsw+2020/list-2','Mascot');
-      process(website+'/buy/in-mascot,+nsw+2020/list-3','Mascot');
+      //process(website+'/buy/in-mascot,+nsw+2020/list-1','Mascot');
+      //process(website+'/buy/in-mascot,+nsw+2020/list-2','Mascot');
+      //process(website+'/buy/in-mascot,+nsw+2020/list-3','Mascot');
     }
 });
 cronJob.start();

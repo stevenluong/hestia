@@ -15,10 +15,10 @@ var offers = [] ;
 var process = function(){
     tmp.scrape(function($) {
         console.log('---a--');
-        console.log($.html());
+        //console.log($.html());
         //console.log($(".c-pa-info").find(".c-pa-criterion").toString());
         //block__ShadowedBlock-sc-10w6hsj-0 ListContent__SmartClassifiedExtended-sc-1viyr2k-2 iddbNe classified__ClassifiedContainer-sc-1wmlctl-0 jzFgwH Card__CardContainer-sc-7insep-8 hglOTD
-        $(".ListContent__SmartClassifiedExtended-sc-1viyr2k-2").map(function(el){
+        $(".ListContent-sc-1viyr2k-0").map(function(el){
             console.log("in")
             //            return $(this);
             console.log($(this).text());

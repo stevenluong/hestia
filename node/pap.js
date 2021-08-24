@@ -17,7 +17,7 @@ var process = function(){
     tmp.scrape(function($) {
         //console.log('---a--');
         //console.log($(".c-pa-info").find(".c-pa-criterion").toString());
-        $(".search-list-item").map(function(el){
+        $(".search-list-item-alt").map(function(el){
             console.log('---Offer---');
             var offer = {}
             //var source = "pap";
@@ -30,9 +30,10 @@ var process = function(){
             //var criterion =v.find(".c-pa-info .c-pa-criterion em");
 
             //console.log(rawDescription+"--RAWDESCRIPTION")
-            var localId = v.find("div .infos-box").attr("data-annonce");
-            if(localId)
-                localId = JSON.parse(localId).id
+            var localId = v.find("div a.item-title").attr("name");
+            //console.log(localId)
+            //if(localId)
+            //    localId = JSON.parse(localId).id
             //console.log(localId+"--LOCALID")
             var rooms = "TBD";
             var r = v.find("div .item-tags li:contains('pi')").text();
@@ -82,8 +83,8 @@ var process = function(){
             //DESCRIPTION
             var rawDescription = v.find("div .item-description").text();;
             var description = normalize(rawDescription);
-            offer.description = description.split(".")[1];
-            offer.location = description.split(".")[0],
+            offer.description = description.substring(1);
+            offer.location = "TBD"//description.split(".")[0], //TODO - Improve
             offer.locationCoord = {
                     lat : 0,
                     lng : 0
@@ -108,7 +109,7 @@ var process = function(){
             offer.city = "Paris";
             offer.source = source;
 
-            console.log(offer);
+            //console.log(offer);
             if(offer.guid == "pap:undefined"){
                 //console.log(offer);
             }
