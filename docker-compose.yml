@@ -7,7 +7,7 @@ services:
             - ./reactjs/:/reactjs
             - /reactjs/node_modules
         mem_limit: 64m
-        #restart: always
+        restart: always
         networks:
             - nginx_default
     node-dom:
@@ -32,12 +32,12 @@ services:
             - nginx_default
     node-pap:
         build: node/.
-        command: node pap.js
+        command: node pap2.js
         mem_limit: 64m
         volumes:
             - ./node/:/node
             - ./node/node_modules/:/node/node_modules
-        #restart: always
+        restart: always
         networks:
             - nginx_default
 
