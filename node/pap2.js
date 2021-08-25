@@ -29,8 +29,8 @@ const options = {
         //userDataDir: './tmp',
         //slowMo:500,
         //devtools:true,
-        executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-        //executablePath:'./node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
+        //executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+        executablePath:'./node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
         //executablePath:'./node_modules/puppeteer/.local-chromium/mac-809590/chrome-mac/Chromium.app'
     };
 
