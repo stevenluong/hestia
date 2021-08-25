@@ -1,5 +1,6 @@
 const initialState = {
-  cities:[]
+  cities:[],
+  sortField:"rate"
 }
 
 export default function filtersReducer(state = initialState, action) {
@@ -33,6 +34,12 @@ export default function filtersReducer(state = initialState, action) {
           else
             return city
         })
+      }
+    }
+    case 'filters/sortFieldChanged': {
+      return {
+        ...state,
+        sortField:action.payload
       }
     }
     default:
