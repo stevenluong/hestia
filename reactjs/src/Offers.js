@@ -64,27 +64,38 @@ export default function Offers() {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Id</TableCell>
-            <TableCell>City</TableCell>
-            <TableCell>Price
-            <IconButton
-            size="small"
-            onClick={()=>handleSortFieldChange("price")}
-            //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
-            >
-              <ExpandLessIcon fontSize="inherit"/>
-            </IconButton>
-            </TableCell>
-            <TableCell>Surface
-            <IconButton
-            size="small"
-            onClick={()=>handleSortFieldChange("surface")}
-            //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
-            >
-              <ExpandLessIcon fontSize="inherit"/>
-            </IconButton>
-            </TableCell>
+            <Hidden smDown>
+              <TableCell>Date</TableCell>
+            </Hidden>
+            <Hidden smUp>
+              <TableCell>Id / City</TableCell>
+            </Hidden>
+            <Hidden smDown>
+              <TableCell>Id</TableCell>
+              <TableCell>City</TableCell>
+              <TableCell>Price
+              <IconButton
+              size="small"
+              onClick={()=>handleSortFieldChange("price")}
+              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
+              >
+                <ExpandLessIcon fontSize="inherit"/>
+              </IconButton>
+              </TableCell>
+              <TableCell>Surface
+              <IconButton
+              size="small"
+              onClick={()=>handleSortFieldChange("surface")}
+              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
+              >
+                <ExpandLessIcon fontSize="inherit"/>
+              </IconButton>
+              </TableCell>
+
+            </Hidden>
+            <Hidden smUp>
+              <TableCell>Price / Surface</TableCell>
+            </Hidden>
             <TableCell>Rate
             <IconButton
             size="small"
@@ -94,24 +105,43 @@ export default function Offers() {
               <ExpandLessIcon fontSize="inherit"/>
             </IconButton>
             </TableCell>
+
             <Hidden xlDown>
-            <TableCell>Est Rent</TableCell>
-            <TableCell>Est ROI</TableCell>
+              <TableCell>Est Rent</TableCell>
+              <TableCell>Est ROI</TableCell>
             </Hidden>
           </TableRow>
         </TableHead>
         <TableBody>
           {sortedOffers.map(o => (
             <TableRow key={o.guid}>
-              <TableCell>{moment(o.lastDisplayed).format("DD/MM/YYYY")}</TableCell>
-              <TableCell>
+              <Hidden smDown>
+                <TableCell>{moment(o.lastDisplayed).format("DD/MM/YYYY")}</TableCell>
+              </Hidden>
+              <Hidden smUp>
+                <TableCell>
                 <Link href={o.link} target="_blank" rel="noopener noreferrer" onClick={()=>handleOfferClick(o)} color={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)==-1?"primary":"textPrimary"}>{o.guid} </Link>
-                <Done style={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)!==-1?{}:{display: 'none'}} fontSize="small"/>
-              </TableCell>
-              <TableCell>{o.city}<small style={{display:"none"}}>,{o.source==="domain"?o.location.split(",")[1]:o.location}</small> </TableCell>
-              <TableCell style={o.price<200000?{color:'green'}:{}}>{o.price}{o.currency}</TableCell>
-              <TableCell style={o.estimate?{fontSize:'small',fontStyle:'italic'}:{}}>{o.surface}m²</TableCell>
-              <TableCell>{isNaN(o.rate)?"":parseInt(o.rate)}{o.currency}/m²</TableCell>
+                 <br/>
+                 {o.city}
+                 <Done style={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)!==-1?{}:{display: 'none'}} fontSize="small"/>
+                 </TableCell>
+              </Hidden>
+              <Hidden smDown>
+                <TableCell>
+                  <Link href={o.link} target="_blank" rel="noopener noreferrer" onClick={()=>handleOfferClick(o)} color={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)==-1?"primary":"textPrimary"}>{o.guid} </Link>
+                  <Done style={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)!==-1?{}:{display: 'none'}} fontSize="small"/>
+                </TableCell>
+                <TableCell>{o.city}<small style={{display:"none"}}>,{o.source==="domain"?o.location.split(",")[1]:o.location}</small> </TableCell>
+              </Hidden>
+              <Hidden smUp>
+                <TableCell style={o.price<200000?{color:'green'}:{}}>{o.price}{o.currency} <br/> {o.surface}m²</TableCell>
+              </Hidden>
+              <Hidden smDown>
+                <TableCell style={o.price<200000?{color:'green'}:{}}>{o.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}{o.currency}</TableCell>
+                <TableCell style={o.estimate?{fontSize:'small',fontStyle:'italic'}:{}}>{o.surface}m²</TableCell>
+              </Hidden>
+              <TableCell>{isNaN(o.rate)?"":parseInt(o.rate).toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}{o.currency}/m²</TableCell>
+
               <Hidden xlDown>
               <TableCell>X{o.currency}/month</TableCell>
               <TableCell>X * 12 / {o.price} *100</TableCell>
