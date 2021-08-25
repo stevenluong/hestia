@@ -67,7 +67,7 @@ const process = async function(link,city){
       //offer.link=v.find(".address").attr("href");
       //if(offer.link!=undefined){
       var localIdSplit = offer.link.split("-r");
-      localId=localIdSplit[1]
+      localId=localIdSplit[localIdSplit.length-1]
       //localId = localId.split("?")[0]
       //}else{
       //    //IF NO LINK, THEN SKIP

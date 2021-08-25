@@ -174,7 +174,8 @@ export default function Main({page,publicUser}) {
   const { authState, authService } = useOktaAuth();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  //const [userRequested, setUserRequested] = React.useState(false);
+  const [firstConnection, setFirstConnection] = React.useState(true);
+  const [userRequested, setUserRequested] = React.useState(false);
   //const [user, setUser] = React.useState({_key:0});
   //const [offers, setOffers] = React.useState([])
   //const [cities, setCities] = React.useState([])
@@ -219,37 +220,48 @@ export default function Main({page,publicUser}) {
     </header>
   </div>)
   }
-  if(!authState.isAuthenticated)
+  if(!authState.isAuthenticated && !publicUser)
     return(
       <Redirect to={{ pathname: '/login' }}/>
     )
     //if(!userRequested){
     //  setUserRequested(true);
-      authService.getUser().then((info) => {
-        //setUserInfo(info);
-        //console.log(info);
-        usersHelpers.getUser(info, (u)=>{
-          //console.log(u)
-          //setUser(u)
-          dispatch({type:'user/retrieved',payload:u})
-          getOffers((o)=>{
-            //setOffers(o);
-            //setFilteredOffers(o);
-            dispatch({ type: 'offers/offersRetrieved', payload: o })
-          }, (c)=>{
-            //console.log(c);
-            //setCities(c);
-            var cities = []
-            c.forEach((city, i) => {
-              cities.push({name:city, selected:true})
-            });
-            //console.log(cities);
-            //setFilters(Object.assign(filters,{cities:cities}))
-            dispatch({type:'filters/citiesAdded',payload:cities})
-          });
-        });
-        //setUser(info)
+  if(firstConnection){
+    setFirstConnection(false);
+    getOffers((o)=>{
+      //setOffers(o);
+      //setFilteredOffers(o);
+      dispatch({ type: 'offers/offersRetrieved', payload: o })
+    }, (c)=>{
+      //console.log(c);
+      //setCities(c);
+      var cities = []
+      c.forEach((city, i) => {
+        cities.push({name:city, selected:true})
       });
+      //console.log(cities);
+      //setFilters(Object.assign(filters,{cities:cities}))
+      dispatch({type:'filters/citiesAdded',payload:cities})
+    });
+    if(publicUser){
+      //setUserRequested(true);
+      dispatch({type:'user/public', payload:{}})
+    }
+  }
+  if(!userRequested && !publicUser){
+    setUserRequested(true);
+    authService.getUser().then((info) => {
+      //setUserInfo(info);
+      //console.log(info);
+      usersHelpers.getUser(info, (u)=>{
+        //console.log(u)
+        //setUser(u)
+        dispatch({type:'user/retrieved',payload:u})
+
+      });
+      //setUser(info)
+    });
+  }
     //}
 
 
