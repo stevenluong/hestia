@@ -1,3 +1,5 @@
+import helpers from './User/helpers'
+
 const initialState = {
   public:false,
   seenOffers:[]
@@ -6,7 +8,10 @@ const initialState = {
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
     case 'user/retrieved': {
-      return action.payload
+      return {
+        ...state,
+        ...action.payload
+      }
     }
     case 'user/public': {
       return {
@@ -28,8 +33,8 @@ export default function userReducer(state = initialState, action) {
         ...state,
         seenOffers:[...state.seenOffers.filter(o=>new Date(o.lastDisplayed)>yesterday),action.payload]
         };
-      //if(!u.public)
-        //helpers.updateUser(u);
+      if(!u.public)
+        helpers.updateUser(u);
       return u;
     }
     default:

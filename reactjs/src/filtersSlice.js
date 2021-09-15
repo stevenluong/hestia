@@ -36,6 +36,17 @@ export default function filtersReducer(state = initialState, action) {
         })
       }
     }
+    case 'filters/cityChosen': {
+      return {
+        ...state,
+        cities: state.cities.map(city=>{
+          return {
+            ...city,
+            selected:city.name===action.payload
+          }
+        })
+      }
+    }
     case 'filters/sortFieldChanged': {
       return {
         ...state,

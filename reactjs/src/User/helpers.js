@@ -1,12 +1,24 @@
-var config = {
-  //server : "http://localhost:8529", // local
-  server : "https://athena.slapps.fr",
-  usersUrl : "/_db/production/athena"
-}
+import apiConfig from '../Base/apiConfig';
 
-const helpers = {
+export default {
+    updateUser: function(user){
+      var q = apiConfig.server+apiConfig.usersDbUrl+"/users/"+user._key
+      //console.log(q)
+      fetch(q,{
+        method:'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      })
+          .then(result=>result.json())
+          .then(u=>{
+              //console.log(u);
+              console.log("User updated");
+          });
+    },
     createUser: function(user,cb){
-      var q = config.server+config.usersUrl+"/users/"
+      var q = apiConfig.server+apiConfig.usersUrl+"/users/"
       console.log(q)
       fetch(q,{
         method:'POST',
@@ -23,7 +35,7 @@ const helpers = {
     },
 
     getUser:function (user,cb){
-      var q = config.server+config.usersUrl+"/users/"+user.sub
+      var q = apiConfig.server+apiConfig.usersUrl+"/users/"+user.sub
       //console.log(q)
       fetch(q)
           .then(result=>result.json())
@@ -43,7 +55,7 @@ const helpers = {
     editUser:function (user,cb){
       console.log(user);
       user._rev=null;
-      var q = config.server+config.usersUrl+"/users/"+user._key
+      var q = apiConfig.server+apiConfig.usersUrl+"/users/"+user._key
       fetch(q,{
         method:'PUT',
         headers: {
@@ -59,5 +71,3 @@ const helpers = {
           });
     }
 }
-
-export default helpers;
