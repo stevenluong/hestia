@@ -58,6 +58,8 @@ export default function Offers() {
   var sortedOffers = reduxFilteredOffers.sort((a,b)=>(a[reduxFilters.sortField]-b[reduxFilters.sortField]))
   //console.log(sortedOffers)
   //console.log(sortedNews)
+  console.log(reduxUser.seenOffers)
+  console.log(reduxUser)
   return (
     <React.Fragment>
       <Title id="news">Offers</Title>

@@ -1,5 +1,6 @@
 import React from 'react';
 import Title from './Title';
+import Link from '@material-ui/core/Link';
 //import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 //import IconButton from '@material-ui/core/IconButton';
@@ -28,7 +29,7 @@ export default function Filters() {
     //setFiltered(false);
     dispatch({type:'filters/citiesReset'})
   }
-  const handleCitiesFilterChange = (e,c) => {
+  const handleCityToggledChange = (e,c) => {
     //console.log(c);
 
     //var f = filters;
@@ -47,6 +48,9 @@ export default function Filters() {
     //setFiltered(false);
     dispatch({type:'filters/cityToggled',payload:c.name})
   }
+  const handleCityChosenChange = (e,c) => {
+    dispatch({type:'filters/cityChosen',payload:c.name})
+  }
   return (
     <React.Fragment>
       <Title>Filters</Title>
@@ -59,9 +63,9 @@ export default function Filters() {
         style={{height:25, width:25}}
         color="primary"
         size="small"
-        onChange={(e)=> handleCitiesFilterChange(e,c)}
+        onChange={(e)=> handleCityToggledChange(e,c)}
       />
-        {c.name}
+        <Link onClick={(e)=>handleCityChosenChange(e,c)}>{c.name}</Link>
         <br/>
         </React.Fragment>
       ))}
