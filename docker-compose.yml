@@ -7,7 +7,7 @@ services:
             - ./reactjs/:/reactjs
             - /reactjs/node_modules
         mem_limit: 64m
-        restart: always
+        #restart: always
         networks:
             - nginx_default
     node-dom:
@@ -37,7 +37,7 @@ services:
         volumes:
             - ./node/:/node
             - ./node/node_modules/:/node/node_modules
-        restart: always
+        #restart: always
         networks:
             - nginx_default
 

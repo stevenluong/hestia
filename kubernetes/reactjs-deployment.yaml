@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hestia-reactjs-deployment
+  labels:
+    app: hestia-reactjs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hestia-reactjs
+  template:
+    metadata:
+      labels:
+        app: hestia-reactjs
+    spec:
+      containers:
+      - name: hestia-reactjs
+        image: stevenluong/hestia-reactjs:latest
+        imagePullPolicy: "Always"
+        #ports:
+        #- containerPort: 80

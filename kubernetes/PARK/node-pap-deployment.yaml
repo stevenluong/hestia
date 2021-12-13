@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hestia-node-pap
+  labels:
+    app: hestia-node-pap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hestia-node-pap
+  template:
+    metadata:
+      labels:
+        app: hestia-node-pap
+    spec:
+      containers:
+      - name: hestia-node-pap
+        image: stevenluong/hestia-node-pap:v0.6
+        #ports:
+        #- containerPort: 80
