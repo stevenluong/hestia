@@ -10,6 +10,7 @@ import Title from './Title';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Done from '@material-ui/icons/Done';
 import moment from 'moment';
 //REDUX
@@ -55,11 +56,20 @@ export default function Offers() {
   //console.log(reduxFilters)
   //console.log(reduxFilters.sortField)
   //console.log(reduxFilteredOffers[0][reduxFilters.sortField])
-  var sortedOffers = reduxFilteredOffers.sort((a,b)=>(a[reduxFilters.sortField]-b[reduxFilters.sortField]))
+  var sortedOffers = []
+  //console.log(reduxFilters.sortField)
+  if(reduxFilters.sortField=="createdOn"){
+    sortedOffers = reduxFilteredOffers.sort((a,b)=>(moment(a.createdOn)-moment(b.createdOn)));
+  }else if(reduxFilters.sortField=="createdOn-") {
+    sortedOffers = reduxFilteredOffers.sort((a,b)=>(moment(b.createdOn)-moment(a.createdOn)));
+  }else {
+    sortedOffers = reduxFilteredOffers.sort((a,b)=>(a[reduxFilters.sortField]-b[reduxFilters.sortField]))
+  }
+
   //console.log(sortedOffers)
   //console.log(sortedNews)
-  console.log(reduxUser.seenOffers)
-  console.log(reduxUser)
+  //console.log(reduxUser.seenOffers)
+  //console.log(reduxUser)
   return (
     <React.Fragment>
       <Title id="news">Offers</Title>
@@ -67,7 +77,22 @@ export default function Offers() {
         <TableHead>
           <TableRow>
             <Hidden smDown>
-              <TableCell>Date</TableCell>
+              <TableCell>Created On
+              <IconButton
+              size="small"
+              onClick={()=>handleSortFieldChange("createdOn")}
+              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
+              >
+                <ExpandLessIcon fontSize="inherit"/>
+              </IconButton>
+              <IconButton
+              size="small"
+              onClick={()=>handleSortFieldChange("createdOn-")}
+              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
+              >
+                <ExpandMoreIcon fontSize="inherit"/>
+              </IconButton>
+              </TableCell>
             </Hidden>
             <Hidden smUp>
               <TableCell>Id / City</TableCell>
@@ -118,7 +143,7 @@ export default function Offers() {
           {sortedOffers.map(o => (
             <TableRow key={o.guid}>
               <Hidden smDown>
-                <TableCell>{moment(o.lastDisplayed).format("DD/MM/YYYY")}</TableCell>
+                <TableCell>{moment(o.createdOn).format("DD/MM/YYYY")} ({moment().diff(moment(o.createdOn),'days')}d)</TableCell>
               </Hidden>
               <Hidden smUp>
                 <TableCell>

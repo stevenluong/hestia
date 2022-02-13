@@ -22,6 +22,7 @@ const AppWithRouterAccess = () => {
               pkce={true} >
       <Switch>
         <Route path='/public' exact={true} render={() => <Main page="dashboard" publicUser={true}/>} />
+        <Route path='/loanSimulator' exact={true} render={() => <Main page="simulator"/>} />
         <SecureRoute path='/' exact={true} render={() => <Main page="dashboard" />} />
         <Route path='/login' render={() => <SignInSide baseUrl={config.url} />} />
         <Route path='/signup' render={() => <SignUp baseUrl={config.url} />} />

@@ -1,25 +1,13 @@
 {
-    "name": "hephaistos",
-    "version": "0.0.1",
+    "name": "hestia-node",
+    "version": "2.0.0",
     "license": "",
     "repository": "https://github.com/stevenluong/",
     "dependencies": {
-        "angular-chart.js": "*",
-        "bower": "*",
-        "connect": "*",
-        "cron": "^1.8.2",
-        "express": "*",
-        "feedparser": "*",
-        "forever": "*",
-        "http-server": "*",
-        "puppeteer": "^5.4.1",
-        "puppeteer-core": "^5.4.1",
-        "puppeteer-extra": "^3.1.15",
-        "puppeteer-extra-plugin-stealth": "^2.6.5",
-        "querystring": "*",
-        "request": "*",
-        "scraperjs": "*",
-        "socket.io": "*",
-        "socket.io-client": "*"
+        "cron": "*",
+        "puppeteer": "*",
+        "puppeteer-extra": "*",
+        "puppeteer-extra-plugin-stealth": "*",
+        "request": "*"
     }
 }

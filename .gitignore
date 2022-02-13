@@ -8,5 +8,6 @@ ror/vendor/cache/
 reactjs/build/
 *.swp
 *.swo
+*/tmp/*
 
 

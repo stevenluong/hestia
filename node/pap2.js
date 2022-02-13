@@ -15,31 +15,33 @@ puppeteer.use(StealthPlugin())
 const args = [
         '--no-sandbox',
         '--disable-setuid-sandbox',
-        '--disable-infobars',
-        '--window-position=0,0',
-        '--ignore-certifcate-errors',
-        '--ignore-certifcate-errors-spki-list',
-        '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.0183 Safari/537.36"'
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+        //'--disable-infobars',
+        //'--window-position=0,0',
+        //'--ignore-certifcate-errors',
+        //'--ignore-certifcate-errors-spki-list',
+        //'--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.0183 Safari/537.36"'
     ];
-
-const options = {
-        //args,
-        //headless: false,
+//console.log("LOCATION:"+process.env.LOCATION)
+var options = {
+        args,
+        headless: true,
         //ignoreHTTPSErrors: true,
         //userDataDir: './tmp',
         //slowMo:500,
         //devtools:true,
         //executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-        executablePath:'./node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
+        //executablePath:process.env.LOCATION=="mac"?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':'./node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
         //executablePath:'./node_modules/puppeteer/.local-chromium/mac-809590/chrome-mac/Chromium.app'
     };
 
 //const source = "realestate";
 const source = "pap";
 const website = "https://www.pap.fr";
-const process = async function(link,city){
-  console.log("Process starting");
-  const browser = await puppeteer.launch(options);
+var scrape = async function(link,city){
+  console.log("Process starting with : "+city);
+  var browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   page.on('console', msg => console.log('Console Log:', msg.text()));
   //await page.setRequestInterception(true);
@@ -200,15 +202,23 @@ const process = async function(link,city){
 };
 
 
-var processAll = function(){
-  process(website+'/annonce/vente-immobiliere-paris-75-g439-studio','Paris');
-  process(website+'/annonce/vente-immobiliere-paris-75-g439','Paris');
-  process(website+'/annonce/vente-immobiliere-biarritz-64200-g33376','Biarritz');
-  process(website+'/annonce/vente-immobiliere-biarritz-64200-g33376-studio','Biarritz');
-  process(website+'/annonce/vente-immobiliere-bordeaux-33-g43588','Bordeaux');
-  process(website+'/annonce/vente-immobiliere-bordeaux-33-g43588-studio','Bordeaux');
+var scrapeAll = async function(){
+  //await scrape(website+'/annonce/vente-immobiliere-paris-75-g439-studio','Paris');
+  //await scrape(website+'/annonce/vente-immobiliere-paris-75-g439','Paris');
+  await scrape(website+'/annonce/vente-immobiliere-bordeaux-33-g43588','Bordeaux');
+  await scrape(website+'/annonce/vente-immobiliere-bordeaux-33-g43588-studio','Bordeaux');
+  //await scrape(website+'/annonce/vente-immobiliere-rouen-76-g43640','Rouen');
+  //await scrape(website+'/annonce/vente-immobiliere-rouen-76-g43640-studio','Rouen');
+  //await scrape(website+'/annonce/vente-immobiliere-lille-59-g43627','Lille');
+  //await scrape(website+'/annonce/vente-immobiliere-lille-59-g43627-studio','Lille');
+  await scrape(website+'/annonce/vente-immobiliere-anglet-64600-g33708','Anglet');
+  await scrape(website+'/annonce/vente-immobiliere-anglet-64600-g33708-studio','Anglet');
+  await scrape(website+'/annonce/vente-immobiliere-saint-jean-de-luz-64500-g33706','St-Jean-de-Luz');
+  await scrape(website+'/annonce/vente-immobiliere-saint-jean-de-luz-64500-g33706-studio','St-Jean-de-Luz');
+  await scrape(website+'/annonce/vente-immobiliere-biarritz-64200-g33376','Biarritz');
+  await scrape(website+'/annonce/vente-immobiliere-biarritz-64200-g33376-studio','Biarritz');
 }
-processAll();
+scrapeAll();
 //process(website+'/buy/between-100000-500000-in-gold+coast/list-2','Gold Coast');
 //process(website+'/buy/between-100000-500000-in-gold+coast/list-3','Gold Coast');
 
@@ -238,11 +248,12 @@ const putPost = function(post){
 
 
 //CRON
+/*
 var CronJob = require('cron').CronJob;
 var cronJob = new CronJob({
     cronTime: '0 30 8 * * *',
     onTick: function() {
-      processAll();
+      scrapeAll();
       //process(website+'/buy/between-100000-500000-in-gold+coast/list-1','Gold Coast');
       //process(website+'/buy/between-100000-500000-in-gold+coast/list-2','Gold Coast');
       //process(website+'/buy/between-100000-500000-in-gold+coast/list-3','Gold Coast');
@@ -257,3 +268,4 @@ var cronJob = new CronJob({
     }
 });
 cronJob.start();
+*/

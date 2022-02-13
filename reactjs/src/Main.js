@@ -25,6 +25,7 @@ import { useDispatch } from 'react-redux'
 
 import Profile from './User/Profile';
 import Dashboard from './Dashboard';
+import Simulator from './Simulator/Simulator';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -36,6 +37,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import LayersIcon from '@material-ui/icons/Layers';
 //import BookmarkIcon from '@material-ui/icons/Bookmark';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import CalculateIcon from '@mui/icons-material/Calculate';
 
 //import moment from 'moment';
 import usersHelpers from './User/helpers';
@@ -286,6 +288,8 @@ export default function Main({page,publicUser}) {
     content = <Profile/>
   if(page==="dashboard")
     content = <Dashboard/>
+  if(page==="simulator")
+    content = <Simulator/>
 
   //console.log(fetch);
   return (
@@ -332,6 +336,12 @@ export default function Main({page,publicUser}) {
                 <LayersIcon />
               </ListItemIcon>
               <ListItemText primary="Dashboard" />
+            </ListItem>
+            <ListItem button component={RouterLink} to="/loanSimulator">
+            <ListItemIcon>
+              <CalculateIcon />
+            </ListItemIcon>
+            <ListItemText primary="Simulator" />
             </ListItem>
             <ListItem button component={RouterLink} to="/aroundme">
             <ListItemIcon>

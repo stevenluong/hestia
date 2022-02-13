@@ -26,12 +26,12 @@ export default function userReducer(state = initialState, action) {
       //var news = action.payload;
       //var title = news.title;
       //var split = title.split(" ");
-      var yesterday = new Date();
-      yesterday.setDate(yesterday.getDate()-1)
+      var lastWeek = new Date();
+      lastWeek.setDate(lastWeek.getDate()-7)
       //console.log(yesterday)
       var u = {
         ...state,
-        seenOffers:[...state.seenOffers.filter(o=>new Date(o.lastDisplayed)>yesterday),action.payload]
+        seenOffers:[...state.seenOffers.filter(o=>new Date(o.lastDisplayed)>lastWeek),action.payload]
         };
       if(!u.public)
         helpers.updateUser(u);
