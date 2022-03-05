@@ -46,6 +46,7 @@ export default function Offers() {
     dispatch({type:'filters/sortFieldChanged', payload:field})
   }
   const handleOfferClick = (o) => {
+    window.open(o.link  , "_blank", "noopener,noreferrer")
     dispatch({type:'user/offerClicked',payload:o})
   }
   const reduxFilteredOffers = useSelector(selectFilteredOffers);
@@ -106,12 +107,8 @@ export default function Offers() {
               </IconButton>
               </TableCell>
             </Hidden>
-            <Hidden lgUp>
-              <TableCell>Id / City</TableCell>
-            </Hidden>
+            <TableCell>City</TableCell>
             <Hidden mdDown>
-              <TableCell>Id</TableCell>
-              <TableCell>City</TableCell>
               <TableCell>Price
               <IconButton
               size="small"
@@ -155,25 +152,14 @@ export default function Offers() {
         </TableHead>
         <TableBody>
           {sortedOffers.map(o => (
-            <TableRow key={o.guid}>
-              <Hidden mdDown>
-                <TableCell>{moment(o.createdOn).format("DD/MM/YYYY")} ({moment().diff(moment(o.createdOn),'days')}d)</TableCell>
-              </Hidden>
-              <Hidden lgUp>
-                <TableCell>
-                <Link href={o.link} target="_blank" rel="noopener noreferrer" onClick={()=>handleOfferClick(o)} color={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)==-1?"primary":"textPrimary"}>{o.guid} </Link>
-                 <br/>
-                 {o.city}
-                 <Done style={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)!==-1?{}:{display: 'none'}} fontSize="small"/>
-                 </TableCell>
-              </Hidden>
+            <TableRow hover key={o.guid} onClick={()=>handleOfferClick(o)}>
               <Hidden mdDown>
                 <TableCell>
-                  <Link href={o.link} target="_blank" rel="noopener noreferrer" onClick={()=>handleOfferClick(o)} color={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)==-1?"primary":"textPrimary"}>{o.guid} </Link>
-                  <Done style={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)!==-1?{}:{display: 'none'}} fontSize="small"/>
+                <Done style={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)!==-1?{}:{display: 'none'}} fontSize="small"/>
+                {moment(o.createdOn).format("DD/MM/YYYY")} ({moment().diff(moment(o.createdOn),'days')}d)
                 </TableCell>
-                <TableCell>{o.city}<small style={{display:"none"}}>,{o.source==="domain"?o.location.split(",")[1]:o.location}</small> </TableCell>
               </Hidden>
+              <TableCell>{o.city}<small style={{display:"none"}}>,{o.source==="domain"?o.location.split(",")[1]:o.location}</small> </TableCell>
               <Hidden lgUp>
                 <TableCell style={o.price<280000?{color:'green'}:{}}>{o.price}{o.currency} <br/> {o.surface}m²</TableCell>
               </Hidden>

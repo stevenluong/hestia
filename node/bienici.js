@@ -74,7 +74,7 @@ var scrape = async function(link,city){
       //PRICE
       offer.price = o.price;
       //CITY
-      var retrievedCity = o.city;
+      //var retrievedCity = o.city;
       //TODO - type ?
 
       //ADDRESS
@@ -108,7 +108,7 @@ var scrape = async function(link,city){
       offer.rate = offer.price/offer.surface;
       //console.log(offer.rate)
       offer.currency = "€";
-      offer.city = retrievedCity;
+      offer.city = city;
       offer.source = source;
       offer.lastDisplayed=Date.now();
 
@@ -148,6 +148,7 @@ var scrapeAll = async function(){
   //await scrape(website+'/annonce/vente-immobiliere-lille-59-g43627','Lille');
   //await scrape(website+'/annonce/vente-immobiliere-lille-59-g43627-studio','Lille');
   await scrape(website+'/realEstateAds.json?filters=%7B"size"%3A24%2C"from"%3A0%2C"showAllModels"%3Afalse%2C"filterType"%3A"buy"%2C"propertyType"%3A%5B"house"%2C"flat"%5D%2C"page"%3A1%2C"sortBy"%3A"relevance"%2C"sortOrder"%3A"desc"%2C"onTheMarket"%3A%5Btrue%5D%2C"zoneIdsByTypes"%3A%7B"zoneIds"%3A%5B"-422124"%5D%7D%7D&extensionType=extendedIfNoResult&leadingCount=2','Anglet');
+  await scrape(website+'/realEstateAds.json?filters=%7B"size"%3A24%2C"from"%3A0%2C"showAllModels"%3Afalse%2C"filterType"%3A"buy"%2C"propertyType"%3A%5B"house"%2C"flat"%5D%2C"page"%3A1%2C"sortBy"%3A"relevance"%2C"sortOrder"%3A"desc"%2C"onTheMarket"%3A%5Btrue%5D%2C"limit"%3A"c~%60iGxhhH%3Fm%7BV~vh%40tA%3F%60vV"%2C"newProperty"%3Afalse%2C"blurInfoType"%3A%5B"disk"%2C"exact"%5D%2C"zoneIdsByTypes"%3A%7B"zoneIds"%3A%5B"-166713"%5D%7D%7D&extensionType=extendedIfNoResult','Bayonne');
 
 }
 scrapeAll();

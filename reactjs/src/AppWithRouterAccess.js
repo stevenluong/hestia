@@ -23,7 +23,7 @@ const AppWithRouterAccess = () => {
       <Switch>
         <Route path='/public' exact={true} render={() => <Main page="dashboard" publicUser={true}/>} />
         <Route path='/loanSimulator' exact={true} render={() => <Main page="simulator" publicUser={true}/>} />
-        <Route path='/' exact={true} render={() => <Main page="dashboard" publicUser={true}/>} />
+        <SecureRoute path='/' exact={true} render={() => <Main page="dashboard"/>} />
         <Route path='/login' render={() => <SignInSide baseUrl={config.url} />} />
         <Route path='/signup' render={() => <SignUp baseUrl={config.url} />} />
         <Route path='/implicit/callback' component={LoginCallback} />
