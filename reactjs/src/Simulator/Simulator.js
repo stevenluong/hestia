@@ -32,8 +32,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function monthDiff(d1, d2) {
-  console.log(d1);
-  console.log(d2);
+  //console.log(d1);
+  //console.log(d2);
   var months;
   months = (d2.getFullYear() - d1.getFullYear()) * 12;
   months -= d1.getMonth() + 1;
@@ -45,16 +45,17 @@ function parseDate(s){
   return new Date(d[2],d[1]-1,d[0]);
 }
 function calcMonthlyPayment(P,r,N){
-  console.log(N)
+  //console.log(N)
   if(r === 0)
     return P/N;
   else {
     return r*P/(1-Math.pow(1+r,-N));
   }
 }
+/*
 function simulate(s){
   s.key = new Date();
-  //console.log(s)
+  console.log(s)
   //https://en.wikipedia.org/wiki/Mortgage_calculator
   var P = parseInt(s.amount);
   var r = parseFloat(s.rate) / 100 / 12;
@@ -62,14 +63,16 @@ function simulate(s){
   var iR = parseFloat(s.insuranceRate) / 100 /12;
 
   s.monthlyPayment = calcMonthlyPayment(P,r,N);
-
   s.totalCost = s.monthlyPayment*N-P;
-  s.insurranceOnlyMonthlyPayment = P * iR;
-  s.insurranceOnlyTotalCost = s.insurranceOnlyMonthlyPayment*N;
   s.ratio = s.totalCost/s.amount * 100;
-  s.withInsurranceRatio = (s.insurranceOnlyTotalCost + s.totalCost) / P * 100
 
-  if(!s.renegociate){
+  if(!s.insuranceChecked){
+  }else{
+    s.insuranceOnlyMonthlyPayment = P * iR;
+    s.insuranceOnlyTotalCost = s.insuranceOnlyMonthlyPayment*N;
+    s.withInsuranceRatio = (s.insuranceOnlyTotalCost + s.totalCost) / P * 100
+  }
+  if(!s.renegociateChecked){
     //console.log(s)
   }else{
     var n = monthDiff(parseDate(s.startDate), new Date())
@@ -88,12 +91,12 @@ function simulate(s){
 
   //console.log(s.startDate);
 
-  console.log(s)
+  //console.log(s)
   return s;
 }
+*/
 export default function Simulator({assets}) {
   const classes = useStyles();
-  const [insuranceChecked, setInsuranceChecked] = React.useState(true)
   //const [renegociateChecked, setRenegociateChecked] = React.useState(false)
   //TODO - Connect to Assets
   var s1 = {
@@ -101,6 +104,7 @@ export default function Simulator({assets}) {
     amount : 280000, //279712.21
     rate: 1.75,
     duration: 25,
+    insuranceChecked: true,
     insuranceRate: 0.36,
     startDate : "05/02/2018"
   }
@@ -109,6 +113,7 @@ export default function Simulator({assets}) {
     amount : 170000, //170778.74
     rate: 1.55,
     duration: 288/12,
+    insuranceChecked: true,
     insuranceRate: 0.49,
     startDate : "29/09/2018"
   }
@@ -117,6 +122,7 @@ export default function Simulator({assets}) {
     amount : 20000, //170778.74
     rate: 3.5,
     duration: 10,
+    insuranceChecked: true,
     insuranceRate: 0.22,
     startDate : "11/07/2019"
   }
@@ -125,6 +131,7 @@ export default function Simulator({assets}) {
     amount : 15000, //170778.74
     rate: 4.1,
     duration: 5,
+    insuranceChecked: true,
     insuranceRate: 0.22,
     startDate : "11/07/2019"
   }
@@ -132,8 +139,51 @@ export default function Simulator({assets}) {
     //guid : 0,
     amount : 200000.00,
     rate: 1.60,
-    duration: 25,
-    insuranceRate: 0.40
+    duration: 25
+  }
+
+  const simulate = (s) => {
+    s.key = new Date();
+    console.log(s)
+    //https://en.wikipedia.org/wiki/Mortgage_calculator
+    var P = parseInt(s.amount);
+    var r = parseFloat(s.rate) / 100 / 12;
+    var N = (parseInt(s.duration) + 1) * 12;
+    var iR = parseFloat(s.insuranceRate) / 100 /12;
+
+    s.monthlyPayment = calcMonthlyPayment(P,r,N);
+    s.totalCost = s.monthlyPayment*N-P;
+    s.ratio = s.totalCost/s.amount * 100;
+
+    if(!s.insuranceChecked){
+    }else{
+      s.insuranceOnlyMonthlyPayment = P * iR;
+      s.insuranceOnlyTotalCost = s.insuranceOnlyMonthlyPayment*N;
+      s.withInsuranceRatio = (s.insuranceOnlyTotalCost + s.totalCost) / P * 100
+    }
+    if(!s.renegociateChecked){
+      //console.log(s)
+    }else{
+      if(!s.renegociateRate)
+        s.renegociateRate = s.rate
+      var n = monthDiff(parseDate(s.startDate), new Date())
+      //console.log(remainingN);
+      //console.log(Math.pow(1+r,remainingN)*P)
+      s.renegociateAmount = Math.pow(1+r,n)*P- (Math.pow(1+r,n)-1)/r*s.monthlyPayment;
+      //console.log(s.renegociateAmount)
+
+      s.renegociateDuration = N - n;
+      //console.log(s.renegociateRate)
+      s.renegociateMonthlyPayment = calcMonthlyPayment(s.renegociateAmount,s.renegociateRate/100/12,s.renegociateDuration);
+      s.renegociateTotalCost = s.renegociateMonthlyPayment*s.renegociateDuration- s.renegociateAmount;
+      s.renegociateRatio = s.renegociateTotalCost/s.renegociateAmount*100;
+      s.renegociateDuration = s.renegociateDuration / 12;
+    }
+
+    //console.log(s.startDate);
+
+    //console.log(s)
+    return s;
   }
   const [simulations, setSimulations] = React.useState([simulate(s1),simulate(s2),simulate(s3),simulate(s4),simulate(s5)])
   //console.log(simulations);
@@ -143,7 +193,7 @@ export default function Simulator({assets}) {
     <Grid container direction="row" spacing={3}>
       <Grid item xs={12} md={12} lg={3}>
         <Paper className={classes.paper}>
-          <Inputs simulations={simulations} insuranceChecked={insuranceChecked}  addSimulation={(s)=>setSimulations([...simulations,simulate(s)])} toggleInsurance={(b)=>setInsuranceChecked(b)} />
+          <Inputs simulations={simulations}  addSimulation={(s)=>setSimulations([...simulations,simulate(s)])}  />
         </Paper>
         <br/>
         <Paper className={classes.paper}>
@@ -197,7 +247,7 @@ export default function Simulator({assets}) {
       </Grid>
       <Grid item xs={12} md={12} lg={9}>
         <Paper className={classes.paper}>
-          <Simulations simulations={simulations} insuranceChecked={insuranceChecked}/>
+          <Simulations simulations={simulations} clearSimulations={()=>setSimulations([])}/>
         </Paper>
 
       </Grid>

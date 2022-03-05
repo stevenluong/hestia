@@ -7,8 +7,17 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 export default function Inputs(props) {
-  const [simulation, setSimulation] = React.useState(props.simulations[0])
-  const [insuranceChecked, setInsuranceChecked] = React.useState(props.insuranceChecked)
+  var s = {
+    //guid : 0,
+    amount : 280000, //279712.21
+    rate: 1.75,
+    duration: 25,
+    insuranceChecked: true,
+    insuranceRate: 0.36,
+    startDate : "05/02/2018"
+  }
+  const [simulation, setSimulation] = React.useState(s)
+  const [insuranceChecked, setInsuranceChecked] = React.useState(s.insuranceChecked)
   //const [renegociateChecked, setRenegociateChecked] = React.useState(props.renegociateChecked)
   const [renegociateChecked, setRenegociateChecked] = React.useState(false)
   const handleAmountChange = (e) => {
@@ -20,6 +29,10 @@ export default function Inputs(props) {
   const handleDurationChange = (e) => {
     setSimulation({...simulation, duration:e.target.value});
   };
+  const handleInsuranceToggle = (e) => {
+    setInsuranceChecked(e.target.checked);
+    setSimulation({...simulation, insuranceChecked:e.target.checked});
+  };
   const handleInsuranceChange = (e) => {
     setSimulation({...simulation, insuranceRate:e.target.value});
   };
@@ -27,17 +40,12 @@ export default function Inputs(props) {
     setSimulation({...simulation, startDate:e.target.value});
   };
   const handleNewRateChange = (e) => {
-    console.log("new Rate")
+    //console.log("new Rate")
     setSimulation({...simulation, renegociateRate:e.target.value});
   };
-  const handleRenegociateChange = (e) => {
-    //props.toggleRenegociate(!renegociateChecked);
-    //console.log(e.target.checked)
+  const handleRenegociateToggle = (e) => {
     setRenegociateChecked(e.target.checked);
-    //props.toggleRenegociate(renegociateChecked);
-    //console.log("reneg")
-    //console.log(renegociateChecked)
-    setSimulation({...simulation, renegociate:e.target.checked});
+    setSimulation({...simulation, renegociateChecked:e.target.checked});
   };
   return (
     <React.Fragment>
@@ -72,7 +80,7 @@ export default function Inputs(props) {
         control={
           <Checkbox
             checked={insuranceChecked}
-            onChange={()=>{props.toggleInsurance(!insuranceChecked);setInsuranceChecked(!insuranceChecked)}}
+            onChange={(e)=>{handleInsuranceToggle(e)}}
             name="insuranceCheckbox"
             color="primary"
           />
@@ -96,7 +104,7 @@ export default function Inputs(props) {
           control={
             <Checkbox
               checked={renegociateChecked}
-              onChange={handleRenegociateChange}
+              onChange={handleRenegociateToggle}
               name="renegociateCheckbox"
               color="primary"
             />

@@ -343,12 +343,6 @@ export default function Main({page,publicUser}) {
             </ListItemIcon>
             <ListItemText primary="Simulator" />
             </ListItem>
-            <ListItem button component={RouterLink} to="/aroundme">
-            <ListItemIcon>
-              <LocationOnIcon />
-            </ListItemIcon>
-            <ListItemText primary="Around Me" />
-          </ListItem>
         </div>
         </List>
         <Divider />

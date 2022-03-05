@@ -5,6 +5,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from '../Common/Title';
+import Button from '@material-ui/core/Button';
+import ClearIcon from '@material-ui/icons/Clear';
 
 export default function Simulations(props) {
   var simulations = props.simulations;
@@ -19,33 +21,42 @@ export default function Simulations(props) {
             <TableCell>Amount</TableCell>
             <TableCell>Rate</TableCell>
             <TableCell>Duration</TableCell>
-            {props.insuranceChecked && (<TableCell>Insurance Rate</TableCell>)}
-            <TableCell>Monthly Payment {props.insuranceChecked && (<span>(Insurrance)</span>)}</TableCell>
-            <TableCell>Total Cost {props.insuranceChecked && (<span>(Insurrance)</span>)}</TableCell>
-            <TableCell>Ratio {props.insuranceChecked && (<span>(Insurrance)</span>)}</TableCell>
+            <TableCell>Monthly Payment </TableCell>
+            <TableCell>Total Cost </TableCell>
+            <TableCell>Ratio </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {simulations.map(s => (
             <React.Fragment>
             <TableRow key={s.key}>
-                <TableCell>{s.amount} {s.renegociate && (<span><br/>Remaining <br/> {s.renegociateAmount.toFixed(2)}</span>)}</TableCell>
-                <TableCell>{s.rate}% {s.renegociate && (<span><br/>New <br/> {s.renegociateRate}%</span>)}</TableCell>
-                <TableCell>{s.duration} y {s.renegociate && (<span><br/>Remaining <br/> {s.renegociateDuration.toFixed(2)} y</span>)}</TableCell>
-                {props.insuranceChecked && (<TableCell>{s.insuranceRate}%</TableCell>)}
-                <TableCell>{s.monthlyPayment.toFixed(0)}
-                {props.insuranceChecked && (<span><br/>(+ {s.insurranceOnlyMonthlyPayment.toFixed(0)} = {(s.monthlyPayment+s.insurranceOnlyMonthlyPayment).toFixed(0)}) </span>)}
-                {s.renegociate && (<span><br/>Renegociated <br/> {s.renegociateMonthlyPayment.toFixed(0) - s.monthlyPayment.toFixed(0)} = {s.renegociateMonthlyPayment.toFixed(0)}</span>)}
+                <TableCell>
+                  {s.amount}
+                  {s.insuranceChecked && (<span><br/>Insurance </span>)}
+                  {s.renegociateChecked && (<span><br/>Renegociate  {s.renegociateAmount.toFixed(2)}</span>)}</TableCell>
+                <TableCell>
+                  {s.rate}%
+                  {s.insuranceChecked && (<span><br/>{s.insuranceRate}%</span>)}
+                  {s.renegociateChecked && (<span><br/>{s.renegociateRate}%</span>)}
                 </TableCell>
                 <TableCell>
-                {s.totalCost.toFixed(0)}
-                {props.insuranceChecked && (<span><br/>(+ {s.insurranceOnlyTotalCost.toFixed(0)} = {(s.totalCost+s.insurranceOnlyTotalCost).toFixed(0)})</span>)}
-                {s.renegociate && (<span><br/>Renegociated <br/> {s.renegociateTotalCost.toFixed(0) - s.totalCost.toFixed(0)} = {s.renegociateTotalCost.toFixed(0)}</span>)}
+                  {s.duration}y
+                  {s.renegociateChecked && (<span><br/> <br/> {s.renegociateDuration.toFixed(0)}y</span>)}</TableCell>
+
+                <TableCell>
+                  {s.monthlyPayment.toFixed(0)}
+                  {s.insuranceChecked && (<span><br/>+{s.insuranceOnlyMonthlyPayment.toFixed(0)} = {(s.monthlyPayment+s.insuranceOnlyMonthlyPayment).toFixed(0)} </span>)}
+                  {s.renegociateChecked && (<span><br/> {s.renegociateMonthlyPayment.toFixed(0) - s.monthlyPayment.toFixed(0)} = {s.renegociateMonthlyPayment.toFixed(0)}</span>)}
                 </TableCell>
                 <TableCell>
-                {s.ratio.toFixed(0)}%
-                {props.insuranceChecked && (<span><br/>({s.withInsurranceRatio.toFixed(0)}%)</span>)}
-                {s.renegociate && (<span><br/>Renegociated <br/> {s.renegociateRatio.toFixed(0)-s.ratio.toFixed(0)} = {s.renegociateRatio.toFixed(0)}%</span>)}
+                  {s.totalCost.toFixed(0)}
+                  {s.insuranceChecked && (<span><br/>+{s.insuranceOnlyTotalCost.toFixed(0)} = {(s.totalCost+s.insuranceOnlyTotalCost).toFixed(0)}</span>)}
+                  {s.renegociateChecked && (<span><br/> {s.renegociateTotalCost.toFixed(0) - s.totalCost.toFixed(0)} = {s.renegociateTotalCost.toFixed(0)}</span>)}
+                </TableCell>
+                <TableCell>
+                  {s.ratio.toFixed(0)}%
+                  {s.insuranceChecked && (<span><br/>+{s.withInsuranceRatio.toFixed(0)-s.ratio.toFixed(0)}% = {s.withInsuranceRatio.toFixed(0)}%</span>)}
+                  {s.renegociateChecked && (<span><br/> {s.renegociateRatio.toFixed(0)-s.ratio.toFixed(0)} = {s.renegociateRatio.toFixed(0)}%</span>)}
                 </TableCell>
             </TableRow>
             </React.Fragment>
@@ -53,6 +64,14 @@ export default function Simulations(props) {
 
         </TableBody>
       </Table>
+      <Button
+      variant="outlined"
+      color="primary"
+      endIcon={<ClearIcon/>}
+      onClick = {()=> props.clearSimulations()}
+    >
+      Clear
+    </Button>
     </React.Fragment>
   );
 }
