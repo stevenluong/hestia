@@ -45,6 +45,7 @@ function parseDate(s){
   return new Date(d[2],d[1]-1,d[0]);
 }
 function calcMonthlyPayment(P,r,N){
+  console.log(N)
   if(r === 0)
     return P/N;
   else {
@@ -55,10 +56,10 @@ function simulate(s){
   s.key = new Date();
   //console.log(s)
   //https://en.wikipedia.org/wiki/Mortgage_calculator
-  var P = s.amount;
-  var r = s.rate / 100 / 12;
-  var N = (s.duration + 1) * 12;
-  var iR = s.insuranceRate / 100 /12;
+  var P = parseInt(s.amount);
+  var r = parseFloat(s.rate) / 100 / 12;
+  var N = (parseInt(s.duration) + 1) * 12;
+  var iR = parseFloat(s.insuranceRate) / 100 /12;
 
   s.monthlyPayment = calcMonthlyPayment(P,r,N);
 
@@ -68,28 +69,32 @@ function simulate(s){
   s.ratio = s.totalCost/s.amount * 100;
   s.withInsurranceRatio = (s.insurranceOnlyTotalCost + s.totalCost) / P * 100
 
-  if(!s.renegociate)
-    return s;
-  //console.log(s.startDate);
-  var n = monthDiff(parseDate(s.startDate), new Date())
-  //console.log(remainingN);
-  //console.log(Math.pow(1+r,remainingN)*P)
-  s.renegociateAmount = Math.pow(1+r,n)*P- (Math.pow(1+r,n)-1)/r*s.monthlyPayment;
-  console.log(s.renegociateAmount)
+  if(!s.renegociate){
+    //console.log(s)
+  }else{
+    var n = monthDiff(parseDate(s.startDate), new Date())
+    //console.log(remainingN);
+    //console.log(Math.pow(1+r,remainingN)*P)
+    s.renegociateAmount = Math.pow(1+r,n)*P- (Math.pow(1+r,n)-1)/r*s.monthlyPayment;
+    //console.log(s.renegociateAmount)
 
-  s.renegociateDuration = N - n;
-  console.log(s.renegociateRate)
-  s.renegociateMonthlyPayment = calcMonthlyPayment(s.renegociateAmount,s.renegociateRate/100/12,s.renegociateDuration);
-  s.renegociateTotalCost = s.renegociateMonthlyPayment*s.renegociateDuration- s.renegociateAmount;
-  s.renegociateRatio = s.renegociateTotalCost/s.renegociateAmount*100;
-  s.renegociateDuration = s.renegociateDuration / 12;
+    s.renegociateDuration = N - n;
+    //console.log(s.renegociateRate)
+    s.renegociateMonthlyPayment = calcMonthlyPayment(s.renegociateAmount,s.renegociateRate/100/12,s.renegociateDuration);
+    s.renegociateTotalCost = s.renegociateMonthlyPayment*s.renegociateDuration- s.renegociateAmount;
+    s.renegociateRatio = s.renegociateTotalCost/s.renegociateAmount*100;
+    s.renegociateDuration = s.renegociateDuration / 12;
+  }
+
+  //console.log(s.startDate);
+
   console.log(s)
   return s;
 }
 export default function Simulator({assets}) {
   const classes = useStyles();
   const [insuranceChecked, setInsuranceChecked] = React.useState(true)
-  const [renegociateChecked, setRenegociateChecked] = React.useState(false)
+  //const [renegociateChecked, setRenegociateChecked] = React.useState(false)
   //TODO - Connect to Assets
   var s1 = {
     //guid : 0,
@@ -132,12 +137,13 @@ export default function Simulator({assets}) {
   }
   const [simulations, setSimulations] = React.useState([simulate(s1),simulate(s2),simulate(s3),simulate(s4),simulate(s5)])
   //console.log(simulations);
+  //<Inputs simulations={simulations} insuranceChecked={insuranceChecked} renegociateChecked={renegociateChecked} addSimulation={(s)=>setSimulations([...simulations,simulate(s)])} toggleInsurance={(b)=>setInsuranceChecked(b)} toggleRenegociate={(b)=>setRenegociateChecked(b)}/>
   return (
     <React.Fragment>
     <Grid container direction="row" spacing={3}>
       <Grid item xs={12} md={12} lg={3}>
         <Paper className={classes.paper}>
-          <Inputs simulations={simulations} insuranceChecked={insuranceChecked} renegociateChecked={renegociateChecked} addSimulation={(s)=>setSimulations([...simulations,simulate(s)])} toggleInsurance={(b)=>setInsuranceChecked(b)} toggleRenegociate={(b)=>setRenegociateChecked(b)}/>
+          <Inputs simulations={simulations} insuranceChecked={insuranceChecked}  addSimulation={(s)=>setSimulations([...simulations,simulate(s)])} toggleInsurance={(b)=>setInsuranceChecked(b)} />
         </Paper>
         <br/>
         <Paper className={classes.paper}>
@@ -191,7 +197,7 @@ export default function Simulator({assets}) {
       </Grid>
       <Grid item xs={12} md={12} lg={9}>
         <Paper className={classes.paper}>
-          <Simulations simulations={simulations} insuranceChecked={insuranceChecked} renegociateChecked={renegociateChecked}/>
+          <Simulations simulations={simulations} insuranceChecked={insuranceChecked}/>
         </Paper>
 
       </Grid>

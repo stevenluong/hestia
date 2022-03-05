@@ -1,6 +1,6 @@
 const initialState = {
   cities:[],
-  sortField:"rate"
+  sortField:"price"
 }
 
 export default function filtersReducer(state = initialState, action) {

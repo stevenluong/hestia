@@ -9,7 +9,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 export default function Inputs(props) {
   const [simulation, setSimulation] = React.useState(props.simulations[0])
   const [insuranceChecked, setInsuranceChecked] = React.useState(props.insuranceChecked)
-  const [renegociateChecked, setRenegociateChecked] = React.useState(props.renegociateChecked)
+  //const [renegociateChecked, setRenegociateChecked] = React.useState(props.renegociateChecked)
+  const [renegociateChecked, setRenegociateChecked] = React.useState(false)
   const handleAmountChange = (e) => {
     setSimulation({...simulation, amount:e.target.value});
   };
@@ -30,10 +31,13 @@ export default function Inputs(props) {
     setSimulation({...simulation, renegociateRate:e.target.value});
   };
   const handleRenegociateChange = (e) => {
-    props.toggleRenegociate(!renegociateChecked);
-    setRenegociateChecked(!renegociateChecked);
+    //props.toggleRenegociate(!renegociateChecked);
+    //console.log(e.target.checked)
+    setRenegociateChecked(e.target.checked);
+    //props.toggleRenegociate(renegociateChecked);
     //console.log("reneg")
-    setSimulation({...simulation, renegociate:true});
+    //console.log(renegociateChecked)
+    setSimulation({...simulation, renegociate:e.target.checked});
   };
   return (
     <React.Fragment>
@@ -48,20 +52,21 @@ export default function Inputs(props) {
         />
       <br/>
       <TextField
-          id="rate"
-          label="Rate - %"
-          variant="outlined"
-          onChange={handleRateChange}
-          value={simulation.rate}
-        />
-      <br/>
-      <TextField
           id="duration"
           label="Duration - Years"
           variant="outlined"
           onChange={handleDurationChange}
           value={simulation.duration}
         />
+      <br/>
+      <TextField
+          id="rate"
+          label="Rate - %"
+          variant="outlined"
+          onChange={handleRateChange}
+          value={simulation.rate}
+        />
+
       <br/>
       <FormControlLabel
         control={

@@ -63,7 +63,7 @@ var scrape = async function(link,city){
       //LINK
       var linkQ = o.querySelector("div .item-title")
       offer.link = linkQ?website+linkQ.getAttribute('href'):"";
-      //console.log(offer.link);
+      console.log(offer.link);
       //ID
       var localId = "";
       //offer.link=v.find(".address").attr("href");
@@ -105,6 +105,27 @@ var scrape = async function(link,city){
       //  return
       //}
       //console.log(offer.price);
+      //CITY
+      console.log(offer.link)
+      var s = offer.link.split("/");
+      var retrievedCity = city;
+      if(s.length>0){
+        var s2 = s[s.length-1].split("-");
+        var i = 1;
+        if(["appartement","terrain","maison"].indexOf(s2[0])!=-1 && s2[1]!="loft" )
+          retrievedCity = s2[i]
+        else if(s2[0]=="mobil" && s2[1]=="home"){
+          i = i + 1 ;
+          retrievedCity = s2[i];
+        }
+        if(retrievedCity == "saint"){
+          i = i + 1
+          retrievedCity = retrievedCity + "-" + s2[i].charAt(0).toUpperCase() + s2[i].slice(1)
+        }
+        retrievedCity =  retrievedCity.charAt(0).toUpperCase() + retrievedCity.slice(1)
+        console.log(retrievedCity)
+      }
+      //TODO - type ?
 
       //ADDRESS
       //var addressQ = o.querySelector(".residential-card__address-heading")
@@ -174,7 +195,7 @@ var scrape = async function(link,city){
       offer.rate = offer.price/offer.surface;
       //console.log(offer.rate)
       offer.currency = "€";
-      offer.city = city;
+      offer.city = retrievedCity;
       offer.source = source;
       offer.lastDisplayed=Date.now();
       //console.log(offer);
@@ -205,18 +226,19 @@ var scrape = async function(link,city){
 var scrapeAll = async function(){
   //await scrape(website+'/annonce/vente-immobiliere-paris-75-g439-studio','Paris');
   //await scrape(website+'/annonce/vente-immobiliere-paris-75-g439','Paris');
-  await scrape(website+'/annonce/vente-immobiliere-bordeaux-33-g43588','Bordeaux');
-  await scrape(website+'/annonce/vente-immobiliere-bordeaux-33-g43588-studio','Bordeaux');
+  //await scrape(website+'/annonce/vente-immobiliere-bordeaux-33-g43588','Bordeaux');
+  //await scrape(website+'/annonce/vente-immobiliere-bordeaux-33-g43588-studio','Bordeaux');
   //await scrape(website+'/annonce/vente-immobiliere-rouen-76-g43640','Rouen');
   //await scrape(website+'/annonce/vente-immobiliere-rouen-76-g43640-studio','Rouen');
   //await scrape(website+'/annonce/vente-immobiliere-lille-59-g43627','Lille');
   //await scrape(website+'/annonce/vente-immobiliere-lille-59-g43627-studio','Lille');
   await scrape(website+'/annonce/vente-immobiliere-anglet-64600-g33708','Anglet');
   await scrape(website+'/annonce/vente-immobiliere-anglet-64600-g33708-studio','Anglet');
-  await scrape(website+'/annonce/vente-immobiliere-saint-jean-de-luz-64500-g33706','St-Jean-de-Luz');
-  await scrape(website+'/annonce/vente-immobiliere-saint-jean-de-luz-64500-g33706-studio','St-Jean-de-Luz');
   await scrape(website+'/annonce/vente-immobiliere-biarritz-64200-g33376','Biarritz');
   await scrape(website+'/annonce/vente-immobiliere-biarritz-64200-g33376-studio','Biarritz');
+  await scrape(website+'/annonce/vente-immobiliere-bayonne-64100-g33230','Bayonne');
+  await scrape(website+'/annonce/vente-immobiliere-bayonne-64100-g33230-studio','Bayonne');
+
 }
 scrapeAll();
 //process(website+'/buy/between-100000-500000-in-gold+coast/list-2','Gold Coast');
