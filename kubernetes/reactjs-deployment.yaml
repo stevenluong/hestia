@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: hestia
   name: hestia-reactjs-deployment
   labels:
     app: hestia-reactjs
@@ -16,7 +17,11 @@ spec:
     spec:
       containers:
       - name: hestia-reactjs
-        image: stevenluong/hestia-reactjs:latest
+        image: stevenluong/hestia-reactjs:v0.10
         imagePullPolicy: "Always"
         #ports:
         #- containerPort: 80
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        effect: "NoSchedule"
+        operator: "Exists"
