@@ -21,42 +21,28 @@ export default function Filters() {
   //console.log(filters.cities);
   //console.log(citiesFilter);
   const handleReset = () => {
-    //var f = filters;
-    //console.log(k);
-    //var f = Object.assign(filters, {keywords:[...filters.keywords,k]})
-    //var f = {};//Object.assign(filters, {keywords:[],noKeywords:[]})
-    //setFilters(f);
-    //setFiltered(false);
-    dispatch({type:'filters/citiesReset'})
+    dispatch({type:'filters/filtersReset'})
   }
   const handleCityToggledChange = (e,c) => {
-    //console.log(c);
-
-    //var f = filters;
-    //console.log(k);
-    //var cities = filters.cities;
-    //cities.forEach(city => {
-    //  if(city.name === c.name)
-    //    city.selected = e.target.checked;
-    //})
-    //var f = {};
-    //{cities:cities}//= Object.assign(filters, {cities:cities})
-    //setCitiesFilter(cities);
-    //console.log(f);
-    //var f = {};//Object.assign(filters, {keywords:[],noKeywords:[]})
-    //setFilters(Object.assign(f, {cities:cities}));
-    //setFiltered(false);
     dispatch({type:'filters/cityToggled',payload:c.name})
   }
   const handleCityChosenChange = (e,c) => {
     dispatch({type:'filters/cityChosen',payload:c.name})
+  }
+  const handleSourceToggledChange = (e,s) => {
+    dispatch({type:'filters/sourceToggled',payload:s.name})
+  }
+  const handleSourceChosenChange = (e,s) => {
+    dispatch({type:'filters/sourceChosen',payload:s.name})
   }
   return (
     <React.Fragment>
       <Title>Filters</Title>
       Cities: <br/>
       <div>
-      {reduxFilters.cities.map((c,i) => (
+      {reduxFilters.cities.map((c,i) =>
+
+        (
         <React.Fragment key={i}>
         <Checkbox
         checked={c.selected}
@@ -65,7 +51,25 @@ export default function Filters() {
         size="small"
         onChange={(e)=> handleCityToggledChange(e,c)}
       />
-        <Link onClick={(e)=>handleCityChosenChange(e,c)}>{c.name}</Link>
+        <Link onClick={(e)=>handleCityChosenChange(e,c)}>{c.name}</Link> ({c.count})
+        <br/>
+        </React.Fragment>
+      ))}
+      </div>
+      Sources: <br/>
+      <div>
+      {reduxFilters.sources.map((s,i) =>
+
+        (
+        <React.Fragment key={i}>
+        <Checkbox
+        checked={s.selected}
+        style={{height:25, width:25}}
+        color="primary"
+        size="small"
+        onChange={(e)=> handleSourceToggledChange(e,s)}
+      />
+        <Link onClick={(e)=>handleSourceChosenChange(e,s)}>{s.name}</Link> ({s.count})
         <br/>
         </React.Fragment>
       ))}

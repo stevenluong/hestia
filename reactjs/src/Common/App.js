@@ -6,7 +6,7 @@ import AppWithRouterAccess from '../AppWithRouterAccess';
 
 const App = () => {
   return (
-    <Router>
+    <Router basename={"hestia"}>
       <AppWithRouterAccess/>
     </Router>
   );

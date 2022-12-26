@@ -6,9 +6,10 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
 import Filters from './Filters';
+import Stats from './Stats';
 import Day from './Day';
 import Offers from './Offers';
-
+import Offer from './Offer';
 
 const useStyles = makeStyles(theme => ({
 
@@ -29,8 +30,8 @@ export default function Dashboard() {
 
   return (
     <React.Fragment>
-    <Grid container direction="row" spacing={3}>
-    <Grid item xs={12} md={2} lg={2}>
+    <Grid container direction="row" spacing={2}>
+    <Grid item xs={12} md={6} lg={4}>
       <Paper className={paper}>
         <Day />
       </Paper>
@@ -38,13 +39,21 @@ export default function Dashboard() {
       <Paper className={paper}>
         <Filters/>
       </Paper>
+      <br/>
+      <Paper className={paper}>
+        <Stats/>
+      </Paper>
     </Grid>
-      <Grid item xs={12} md={10} lg={10}>
-        <Paper className={classes.paper}>
-          <Offers/>
-        </Paper>
-      </Grid>
-
+    <Grid item xs={12} md={6} lg={4}>
+      <Paper className={classes.paper}>
+        <Offers/>
+      </Paper>
+    </Grid>
+    <Grid item xs={12} md={6} lg={4}>
+      <Paper className={classes.paper}>
+        <Offer/>
+      </Paper>
+    </Grid>
     </Grid>
     </React.Fragment>
   );

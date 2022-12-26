@@ -29,7 +29,7 @@ export default function Offers() {
     //if(reduxFilters.cities.length==0)
     //  return true;
     //else {
-      return reduxFilters.cities.filter(c=>c.selected).map(c=>c.name).indexOf(o.city)!==-1
+      return reduxFilters.cities.filter(c=>c.selected).map(c=>c.name).indexOf(o.city)!==-1 && reduxFilters.sources.filter(s=>s.selected).map(s=>s.name).indexOf(o.source)!==-1
       //for(var i in reduxFilters.cities){
       //  if(reduxFilters.cities[i].selected && o.city === reduxFilters.cities[i].name)
       //    return o;
@@ -46,8 +46,9 @@ export default function Offers() {
     dispatch({type:'filters/sortFieldChanged', payload:field})
   }
   const handleOfferClick = (o) => {
-    window.open(o.link  , "_blank", "noopener,noreferrer")
+    //window.open(o.link  , "_blank", "noopener,noreferrer")
     dispatch({type:'user/offerClicked',payload:o})
+    dispatch({type:'offer/offerSelected',payload:o})
   }
   const reduxFilteredOffers = useSelector(selectFilteredOffers);
   //var cleanedNews = props.news;
@@ -89,27 +90,8 @@ export default function Offers() {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <Hidden mdDown>
-              <TableCell>Created On
-              <IconButton
-              size="small"
-              onClick={()=>handleSortFieldChange("createdOn")}
-              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
-              >
-                <ExpandLessIcon fontSize="inherit"/>
-              </IconButton>
-              <IconButton
-              size="small"
-              onClick={()=>handleSortFieldChange("createdOn-")}
-              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
-              >
-                <ExpandMoreIcon fontSize="inherit"/>
-              </IconButton>
-              </TableCell>
-            </Hidden>
             <TableCell>City</TableCell>
-            <Hidden mdDown>
-              <TableCell>Price
+              <TableCell>Price (€)
               <IconButton
               size="small"
               onClick={()=>handleSortFieldChange("price")}
@@ -118,7 +100,7 @@ export default function Offers() {
                 <ExpandLessIcon fontSize="inherit"/>
               </IconButton>
               </TableCell>
-              <TableCell>Surface
+              <TableCell>Surface (m²)
               <IconButton
               size="small"
               onClick={()=>handleSortFieldChange("surface")}
@@ -127,13 +109,7 @@ export default function Offers() {
                 <ExpandLessIcon fontSize="inherit"/>
               </IconButton>
               </TableCell>
-
-            </Hidden>
-            <Hidden lgUp>
-              <TableCell>Price / Surface</TableCell>
-            </Hidden>
-            <Hidden>
-              <TableCell>Rate
+              <TableCell>Rate (€/m²)
               <IconButton
               size="small"
               onClick={()=>handleSortFieldChange("rate")}
@@ -142,8 +118,6 @@ export default function Offers() {
                 <ExpandLessIcon fontSize="inherit"/>
               </IconButton>
               </TableCell>
-            </Hidden>
-
             <Hidden xlDown>
               <TableCell>Est Rent</TableCell>
               <TableCell>Est ROI</TableCell>
@@ -153,23 +127,10 @@ export default function Offers() {
         <TableBody>
           {sortedOffers.map(o => (
             <TableRow hover key={o.guid} onClick={()=>handleOfferClick(o)}>
-              <Hidden mdDown>
-                <TableCell>
-                <Done style={reduxUser.seenOffers.map(o=>o._id).indexOf(o._id)!==-1?{}:{display: 'none'}} fontSize="small"/>
-                {moment(o.createdOn).format("DD/MM/YYYY")} ({moment().diff(moment(o.createdOn),'days')}d)
-                </TableCell>
-              </Hidden>
               <TableCell>{o.city}<small style={{display:"none"}}>,{o.source==="domain"?o.location.split(",")[1]:o.location}</small> </TableCell>
-              <Hidden lgUp>
-                <TableCell style={o.price<280000?{color:'green'}:{}}>{o.price}{o.currency} <br/> {o.surface}m²</TableCell>
-              </Hidden>
-              <Hidden mdDown>
-                <TableCell style={colorField("price",o.price)}>{o.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}{o.currency}</TableCell>
-                <TableCell style={o.estimate?{fontSize:'small',fontStyle:'italic'}:{}}>{o.surface}m²</TableCell>
-              </Hidden>
-              <Hidden>
-                <TableCell style={colorField("rate",o.rate)}>{isNaN(o.rate)?"":parseInt(o.rate).toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}{o.currency}/m²</TableCell>
-              </Hidden>
+              <TableCell style={colorField("price",o.price)}>{o.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}</TableCell>
+              <TableCell style={o.estimate?{fontSize:'small',fontStyle:'italic'}:{}}>{Math.round(o.surface)}</TableCell>
+              <TableCell style={colorField("rate",o.rate)}>{isNaN(o.rate)?"":parseInt(o.rate).toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}</TableCell>
               <Hidden xlDown>
                 <TableCell>X{o.currency}/month</TableCell>
                 <TableCell>X * 12 / {o.price} *100</TableCell>

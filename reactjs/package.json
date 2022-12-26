@@ -1,5 +1,6 @@
 {
   "name": "reactjs",
+  "homepage":"https://slapps.fr/hestia/",
   "version": "2.0.1",
   "private": true,
   "dependencies": {
@@ -21,12 +22,11 @@
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
-    "recharts": "^1.8.5",
     "redux": "^4.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

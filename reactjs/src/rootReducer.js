@@ -3,6 +3,8 @@ import { combineReducers } from 'redux'
 import offersReducer from './offersSlice'
 import filtersReducer from './filtersSlice'
 import userReducer from './userSlice'
+import statsReducer from './statsSlice'
+import offerReducer from './offerSlice'
 
 const rootReducer = combineReducers({
   // always return a new object for the root state
@@ -10,6 +12,8 @@ const rootReducer = combineReducers({
     offers: offersReducer,
     // For both reducers, we only pass in their slice of the state
     filters: filtersReducer,
-    user: userReducer
+    stats: statsReducer,
+    user: userReducer,
+    offer: offerReducer
   })
 export default rootReducer

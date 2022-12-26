@@ -50,7 +50,8 @@ var config = {
   usersUrl : "/_db/production/athena"
 }
 
-function getOffers(cbOffers, cbCities){
+//function getOffers(cbOffers, cbCities){
+function getOffers(cbOffers){
   var q = config.server+config.dbUrl+"/offers"
   //console.log(q)
   fetch(q)
@@ -73,6 +74,8 @@ function getOffers(cbOffers, cbCities){
               return;
             else {
               o.rate = o.price/o.surface;
+              if(o.rate<1000)
+                return
             }
             //console.log(o)
             //if(o.price !== "TBD" && o.surface !== "TBD")
@@ -80,7 +83,7 @@ function getOffers(cbOffers, cbCities){
           });
           //console.log(filteredOffers);
           cbOffers(filteredOffers);
-          cbCities(cities);
+          //cbCities(cities);
       });
 }
 
@@ -230,11 +233,53 @@ export default function Main({page,publicUser}) {
     //  setUserRequested(true);
   if(firstConnection){
     setFirstConnection(false);
-    getOffers((o)=>{
+    getOffers((offers)=>{
       //setOffers(o);
       //setFilteredOffers(o);
-      dispatch({ type: 'offers/offersRetrieved', payload: o })
-    }, (c)=>{
+      dispatch({ type: 'offers/offersRetrieved', payload: offers })
+
+      var cities = []
+      var sources = []
+      offers.forEach(o=>{
+        //console.log(o.city)
+        //console.log(cities.map(x=>x.name))
+        var i = cities.map(x=>x.name).indexOf(o.city)
+        //console.log(i)
+        if(i==-1){
+          cities.push({name:o.city, selected:true,count:1})
+        }else{
+          var city = cities[i]
+          //console.log(city)
+          city.count = city.count+1
+          cities.splice(i,1,city)
+        }
+
+        var y = sources.map(x=>x.name).indexOf(o.source)
+        //console.log(i)
+        if(y==-1){
+          sources.push({name:o.source, selected:true,count:1})
+        }else{
+          var source = sources[y]
+          //console.log(city)
+          source.count = source.count+1
+          sources.splice(y,1,source)
+        }
+      })
+      //console.log(cities)
+      dispatch({type:'filters/citiesAdded',payload:cities})
+      dispatch({type:'filters/sourcesAdded',payload:sources})
+
+      //STATS
+      var citiesStats = []
+      cities.forEach(c=>{
+        citiesStats.push({
+          name:c.name,
+          avg:Math.round(offers.filter(o=>o.city==c.name).map(o=>o.rate).reduce((a,b)=>a+b,0)/c.count)
+        })
+      })
+      dispatch({type:'stats/citiesProcessed',payload:citiesStats})
+    }
+    /*, (c)=>{
       //console.log(c);
       //setCities(c);
       var cities = []
@@ -244,7 +289,8 @@ export default function Main({page,publicUser}) {
       //console.log(cities);
       //setFilters(Object.assign(filters,{cities:cities}))
       dispatch({type:'filters/citiesAdded',payload:cities})
-    });
+    }*/
+  );
     if(publicUser){
       //setUserRequested(true);
       dispatch({type:'user/public', payload:{}})
