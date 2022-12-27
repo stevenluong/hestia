@@ -6,7 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 //import Button from '@material-ui/core/Button';
 import TableRow from '@material-ui/core/TableRow';
-import Title from './Title';
+import Title from './Common/Title';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';

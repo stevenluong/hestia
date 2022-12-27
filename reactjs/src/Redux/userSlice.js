@@ -1,7 +1,8 @@
-import helpers from './User/helpers'
+import helpers from '../User/helpers'
 
 const initialState = {
   public:false,
+  cities:[],
   seenOffers:[]
 }
 
@@ -16,7 +17,7 @@ export default function userReducer(state = initialState, action) {
     case 'user/public': {
       return {
         ...state,
-        //sources:["SBS","ABC","TechCrunch"],
+        cities:["Biarritz","Anglet","Hossegor"],
         //latestNews:{},
         public:true
       }

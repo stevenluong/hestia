@@ -1,7 +1,8 @@
 const initialState = {
   cities:[],
   sources:[],
-  sortField:"price"
+  sortField:"price",
+  maxPrice:300000
 }
 
 export default function filtersReducer(state = initialState, action) {
@@ -89,6 +90,13 @@ export default function filtersReducer(state = initialState, action) {
       return {
         ...state,
         sortField:action.payload
+      }
+    }
+    case 'filters/maxPriceChanged': {
+      console.log(action.payload)
+      return {
+        ...state,
+        maxPrice:action.payload
       }
     }
     default:

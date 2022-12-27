@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 //import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import moment from 'moment';
-import Title from './Title';
+import Title from './Common/Title';
 
 //function preventDefault(event) {
 //  event.preventDefault();

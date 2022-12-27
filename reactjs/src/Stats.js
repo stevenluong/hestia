@@ -1,5 +1,5 @@
 import React from 'react';
-import Title from './Title';
+import Title from './Common/Title';
 import Link from '@material-ui/core/Link';
 //import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
@@ -15,7 +15,7 @@ export default function Stats() {
   const dispatch = useDispatch()
   const selectStats = state => state.stats;
   const reduxStats = useSelector(selectStats);
-  console.log(reduxStats.cities)
+  //console.log(reduxStats.cities)
   return (
     <React.Fragment>
       <Title>Stats</Title>

@@ -18,14 +18,14 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { useOktaAuth } from '@okta/okta-react';
 import { Link as RouterLink, Redirect } from 'react-router-dom';
-import logo from './Common/logo.png';
+import logo from '../Common/logo.png';
 //REDUX
-//import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 
-import Profile from './User/Profile';
+import Profile from '../User/Profile';
 import Dashboard from './Dashboard';
-import Simulator from './Simulator/Simulator';
+import Simulator from '../Simulator/Simulator';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -40,7 +40,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import CalculateIcon from '@mui/icons-material/Calculate';
 
 //import moment from 'moment';
-import usersHelpers from './User/helpers';
+import usersHelpers from '../User/helpers';
 
 var config = {
   //server : "http://localhost:8529", // local
@@ -91,8 +91,8 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="http://steven-luong.com/">
-        Steven Luong
+      <Link color="inherit" href="https://slapps.fr/steve">
+        Steve Luong
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -200,8 +200,8 @@ export default function Main({page,publicUser}) {
 
   //REDUX
   const dispatch = useDispatch()
-  //const selectUser = state => state.user;
-  //const reduxUser = useSelector(selectUser);
+  const selectUser = state => state.user;
+  const reduxUser = useSelector(selectUser);
   //const selectOffers = state => state.offers;
   //const reduxOffers = useSelector(selectOffers);
   //const selectFilters = state => state.filters;
@@ -246,7 +246,7 @@ export default function Main({page,publicUser}) {
         var i = cities.map(x=>x.name).indexOf(o.city)
         //console.log(i)
         if(i==-1){
-          cities.push({name:o.city, selected:true,count:1})
+          cities.push({name:o.city, selected:reduxUser?reduxUser.cities.indexOf(o.city)!==-1:true,count:1})
         }else{
           var city = cities[i]
           //console.log(city)
@@ -337,7 +337,6 @@ export default function Main({page,publicUser}) {
   if(page==="simulator")
     content = <Simulator/>
 
-  //console.log(fetch);
   return (
     <div className={classes.root}>
       <CssBaseline />

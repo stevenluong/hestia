@@ -6,13 +6,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 //import Button from '@material-ui/core/Button';
 import TableRow from '@material-ui/core/TableRow';
-import Title from './Title';
+import Title from './Common/Title';
+import Title2 from './Common/Title2';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Done from '@material-ui/icons/Done';
 import moment from 'moment';
+import {useEffect} from 'react';
 //REDUX
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
@@ -29,7 +31,9 @@ export default function Offers() {
     //if(reduxFilters.cities.length==0)
     //  return true;
     //else {
-      return reduxFilters.cities.filter(c=>c.selected).map(c=>c.name).indexOf(o.city)!==-1 && reduxFilters.sources.filter(s=>s.selected).map(s=>s.name).indexOf(o.source)!==-1
+      return reduxFilters.cities.filter(c=>c.selected).map(c=>c.name).indexOf(o.city)!==-1
+      && reduxFilters.sources.filter(s=>s.selected).map(s=>s.name).indexOf(o.source)!==-1
+      && (reduxFilters.maxPrice?reduxFilters.maxPrice > o.price : true)
       //for(var i in reduxFilters.cities){
       //  if(reduxFilters.cities[i].selected && o.city === reduxFilters.cities[i].name)
       //    return o;
@@ -49,8 +53,14 @@ export default function Offers() {
     //window.open(o.link  , "_blank", "noopener,noreferrer")
     dispatch({type:'user/offerClicked',payload:o})
     dispatch({type:'offer/offerSelected',payload:o})
+    //location.hash = "#offer"
+    //const element = document.getElementById("offers");
+
+    //console.log(element)
+    //element.scrollIntoView();
   }
   const reduxFilteredOffers = useSelector(selectFilteredOffers);
+
   //var cleanedNews = props.news;
   //if(filteredOffers[0])
   //  console.log(moment(filteredOffers[0].lastDisplayed))
@@ -86,59 +96,70 @@ export default function Offers() {
   //console.log(reduxUser)
   return (
     <React.Fragment>
-      <Title id="news">Offers</Title>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>City</TableCell>
-              <TableCell>Price (€)
-              <IconButton
-              size="small"
-              onClick={()=>handleSortFieldChange("price")}
-              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
-              >
-                <ExpandLessIcon fontSize="inherit"/>
-              </IconButton>
-              </TableCell>
-              <TableCell>Surface (m²)
-              <IconButton
-              size="small"
-              onClick={()=>handleSortFieldChange("surface")}
-              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
-              >
-                <ExpandLessIcon fontSize="inherit"/>
-              </IconButton>
-              </TableCell>
-              <TableCell>Rate (€/m²)
-              <IconButton
-              size="small"
-              onClick={()=>handleSortFieldChange("rate")}
-              //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
-              >
-                <ExpandLessIcon fontSize="inherit"/>
-              </IconButton>
-              </TableCell>
-            <Hidden xlDown>
-              <TableCell>Est Rent</TableCell>
-              <TableCell>Est ROI</TableCell>
-            </Hidden>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedOffers.map(o => (
-            <TableRow hover key={o.guid} onClick={()=>handleOfferClick(o)}>
-              <TableCell>{o.city}<small style={{display:"none"}}>,{o.source==="domain"?o.location.split(",")[1]:o.location}</small> </TableCell>
-              <TableCell style={colorField("price",o.price)}>{o.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}</TableCell>
-              <TableCell style={o.estimate?{fontSize:'small',fontStyle:'italic'}:{}}>{Math.round(o.surface)}</TableCell>
-              <TableCell style={colorField("rate",o.rate)}>{isNaN(o.rate)?"":parseInt(o.rate).toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}</TableCell>
+      <Title id="offers">Offers</Title>
+
+      {reduxFilters.cities.filter(c=>c.selected).map(c => (
+        <React.Fragment key={c.name}>
+          <Title2 id="offers">{c.name}</Title2>
+
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+
+                <TableCell>Price
+                <IconButton
+                size="small"
+                onClick={()=>handleSortFieldChange("price")}
+                //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
+                >
+                  <ExpandLessIcon fontSize="inherit"/>
+                </IconButton>
+                </TableCell>
+                <TableCell>Surface
+                <IconButton
+                size="small"
+                onClick={()=>handleSortFieldChange("surface")}
+                //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
+                >
+                  <ExpandLessIcon fontSize="inherit"/>
+                </IconButton>
+                </TableCell>
+                <TableCell>Rate
+                <IconButton
+                size="small"
+                onClick={()=>handleSortFieldChange("rate")}
+                //style={reduxFilters.noKeywords.indexOf(k.word)!=-1?{}:{ display: 'none' }}
+                >
+                  <ExpandLessIcon fontSize="inherit"/>
+                </IconButton>
+                </TableCell>
               <Hidden xlDown>
-                <TableCell>X{o.currency}/month</TableCell>
-                <TableCell>X * 12 / {o.price} *100</TableCell>
+                <TableCell>Est Rent</TableCell>
+                <TableCell>Est ROI</TableCell>
               </Hidden>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {sortedOffers.filter(o=>o.city==c.name).map(o => (
+              <TableRow hover key={o.guid} onClick={()=>handleOfferClick(o)}>
+                <TableCell style={colorField("price",o.price)}>{o.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}{o.currency}</TableCell>
+                <TableCell style={o.estimate?{fontSize:'small',fontStyle:'italic'}:{}}>{Math.round(o.surface)}m²</TableCell>
+                <TableCell style={colorField("rate",o.rate)}>{isNaN(o.rate)?"":parseInt(o.rate).toString().replace(/\B(?=(\d{3})+(?!\d))/g,".")}{o.currency}/m²</TableCell>
+                <Hidden xlDown>
+                  <TableCell>X{o.currency}/month</TableCell>
+                  <TableCell>X * 12 / {o.price} *100</TableCell>
+                </Hidden>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <br/>
+        </React.Fragment>
+      ))}
+
+
+
+
     </React.Fragment>
   );
 }

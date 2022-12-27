@@ -1,11 +1,12 @@
 import React from 'react';
-import Title from './Title';
+import Title from './Common/Title';
 import Link from '@material-ui/core/Link';
 //import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 //import IconButton from '@material-ui/core/IconButton';
 //import AddIcon from '@material-ui/icons/Add';
 //import RemoveIcon from '@material-ui/icons/Remove';
+import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 //REDUX
 import { useSelector } from 'react-redux'
@@ -34,6 +35,9 @@ export default function Filters() {
   }
   const handleSourceChosenChange = (e,s) => {
     dispatch({type:'filters/sourceChosen',payload:s.name})
+  }
+  const handleMaxPriceChange = (maxPrice) => {
+    dispatch({type:'filters/maxPriceChanged', payload:maxPrice})
   }
   return (
     <React.Fragment>
@@ -74,6 +78,10 @@ export default function Filters() {
         </React.Fragment>
       ))}
       </div>
+      Max Price: <br/>
+      <TextField id="outlined-basic" label="" variant="outlined" onChange={(e)=>handleMaxPriceChange(e.target.value)} value={reduxFilters.maxPrice}/>
+      <br/>
+      <br/>
       <Button color="primary" variant="outlined" href="#" onClick={handleReset}>
         Reset
       </Button>
