@@ -60,6 +60,8 @@ export default function Offer() {
         Surface : {reduxOffer.surface.toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")} m²<br/>
         Rate : {Math.round(reduxOffer.rate).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")} {reduxOffer.currency}/m²<br/>
         <br/>
+        Description : {reduxOffer.description}<br/>
+        <br/>
         <Button color="primary" variant="outlined" href="#" onClick={()=>handleVisitClick(reduxOffer.link)}>
           Visit
         </Button>
