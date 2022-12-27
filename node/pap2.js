@@ -4,9 +4,9 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 var request = require('request');
 var config = {
   //server : "http://localhost:8529", // local
-  server : "https://athena.slapps.fr",
+  server : "https://slapps.fr",
   //dbUrl : "/_db/_system/hephaistos" // local
-  dbUrl : "/_db/production/hestia"
+  dbUrl : "/athena/_db/production/hestia"
 }
 
 
@@ -31,6 +31,7 @@ var options = {
         //userDataDir: './tmp',
         //slowMo:500,
         //devtools:true,
+	executablePath:'google-chrome-stable',
         //executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         //executablePath:process.env.LOCATION=="mac"?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':'./node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
         //executablePath:'./node_modules/puppeteer/.local-chromium/mac-809590/chrome-mac/Chromium.app'
@@ -107,6 +108,7 @@ var scrape = async function(link,city){
       //console.log(offer.price);
       //CITY
       console.log(offer.link)
+      /*
       var s = offer.link.split("/");
       var retrievedCity = city;
       if(s.length>0){
@@ -124,6 +126,13 @@ var scrape = async function(link,city){
         }
         retrievedCity =  retrievedCity.charAt(0).toUpperCase() + retrievedCity.slice(1)
         console.log(retrievedCity)
+      }
+      */
+      if(offer.link.indexOf(city.toLowerCase())==-1){
+        console.log("not keeping")
+        return
+      }else{
+        retrievedCity = city
       }
       //TODO - type ?
 
@@ -238,6 +247,12 @@ var scrapeAll = async function(){
   await scrape(website+'/annonce/vente-immobiliere-biarritz-64200-g33376-studio','Biarritz');
   await scrape(website+'/annonce/vente-immobiliere-bayonne-64100-g33230','Bayonne');
   await scrape(website+'/annonce/vente-immobiliere-bayonne-64100-g33230-studio','Bayonne');
+  await scrape(website+'/annonce/vente-immobiliere-hasparren-642400-g33402','Hasparren');
+  await scrape(website+'/annonce/vente-immobiliere-hasparren-642400-g33402-studio','Hasparren');
+  await scrape(website+'/annonce/vente-immobiliere-hossegor-g52800','Hossegor');
+  await scrape(website+'/annonce/vente-immobiliere-hossegor-g52800-studio','Hossegor');
+  await scrape(website+'/annonce/vente-immobiliere-seignosse-40510-g22964','Seignosse');
+  await scrape(website+'/annonce/vente-immobiliere-seignosse-40510-g22964-studio','Seignosse');
 
 }
 scrapeAll();
@@ -270,10 +285,9 @@ const putPost = function(post){
 
 
 //CRON
-/*
 var CronJob = require('cron').CronJob;
 var cronJob = new CronJob({
-    cronTime: '0 30 8 * * *',
+    cronTime: '0 0 8,20 * * *',
     onTick: function() {
       scrapeAll();
       //process(website+'/buy/between-100000-500000-in-gold+coast/list-1','Gold Coast');
@@ -290,4 +304,3 @@ var cronJob = new CronJob({
     }
 });
 cronJob.start();
-*/

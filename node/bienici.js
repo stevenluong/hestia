@@ -4,9 +4,9 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 var request = require('request');
 var config = {
   //server : "http://localhost:8529", // local
-  server : "https://athena.slapps.fr",
+  server : "https://slapps.fr",
   //dbUrl : "/_db/_system/hephaistos" // local
-  dbUrl : "/_db/production/hestia"
+  dbUrl : "/athena/_db/production/hestia"
 }
 
 
@@ -31,6 +31,7 @@ var options = {
         //userDataDir: './tmp',
         //slowMo:500,
         //devtools:true,
+	executablePath:'google-chrome-stable',
         //executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         //executablePath:process.env.LOCATION=="mac"?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':'./node_modules/puppeteer/.local-chromium/linux-809590/chrome-linux/chrome'
         //executablePath:'./node_modules/puppeteer/.local-chromium/mac-809590/chrome-mac/Chromium.app'
@@ -40,6 +41,7 @@ var options = {
 const source = "bienici";
 const website = "https://www.bienici.com";
 var scrape = async function(link,city){
+
   console.log("Process starting with : "+city);
   var browser = await puppeteer.launch(options);
   const page = await browser.newPage();
@@ -50,11 +52,14 @@ var scrape = async function(link,city){
   //const c = city;
   //const s = source;
   await page.goto(link, {waitUntil: 'networkidle2',timeout:0});
+
   //await page.goto(link);
   const offers = await page.evaluate((source,city,website)=>{
     //debugger;
+
     //console.log(document.querySelector("body").innerText)
     console.log(JSON.parse(document.querySelector("body").innerText).total)
+
     //console.log(`url is ${location.href}`)
     //console.log("in")
     var json = JSON.parse(document.querySelector("body").innerText);
@@ -108,10 +113,17 @@ var scrape = async function(link,city){
       offer.rate = offer.price/offer.surface;
       //console.log(offer.rate)
       offer.currency = "€";
+
+      if(o.district.name.toLowerCase().indexOf(city.toLowerCase())==-1){
+        console.log("not keeping")
+        return
+      }
       offer.city = city;
+
       offer.source = source;
       offer.lastDisplayed=Date.now();
 
+      offer.description = o.description; 
       console.log(offer.guid);
       console.log(offer.surface);
       console.log(offer.price);
@@ -139,6 +151,7 @@ var scrape = async function(link,city){
 
 
 var scrapeAll = async function(){
+  console.log(new Date())
   //await scrape(website+'/annonce/vente-immobiliere-paris-75-g439-studio','Paris');
   //await scrape(website+'/annonce/vente-immobiliere-paris-75-g439','Paris');
   //await scrape(website+'/annonce/vente-immobiliere-bordeaux-33-g43588','Bordeaux');
@@ -147,8 +160,26 @@ var scrapeAll = async function(){
   //await scrape(website+'/annonce/vente-immobiliere-rouen-76-g43640-studio','Rouen');
   //await scrape(website+'/annonce/vente-immobiliere-lille-59-g43627','Lille');
   //await scrape(website+'/annonce/vente-immobiliere-lille-59-g43627-studio','Lille');
-  await scrape(website+'/realEstateAds.json?filters=%7B"size"%3A24%2C"from"%3A0%2C"showAllModels"%3Afalse%2C"filterType"%3A"buy"%2C"propertyType"%3A%5B"house"%2C"flat"%5D%2C"page"%3A1%2C"sortBy"%3A"relevance"%2C"sortOrder"%3A"desc"%2C"onTheMarket"%3A%5Btrue%5D%2C"zoneIdsByTypes"%3A%7B"zoneIds"%3A%5B"-422124"%5D%7D%7D&extensionType=extendedIfNoResult&leadingCount=2','Anglet');
-  await scrape(website+'/realEstateAds.json?filters=%7B"size"%3A24%2C"from"%3A0%2C"showAllModels"%3Afalse%2C"filterType"%3A"buy"%2C"propertyType"%3A%5B"house"%2C"flat"%5D%2C"page"%3A1%2C"sortBy"%3A"relevance"%2C"sortOrder"%3A"desc"%2C"onTheMarket"%3A%5Btrue%5D%2C"limit"%3A"c~%60iGxhhH%3Fm%7BV~vh%40tA%3F%60vV"%2C"newProperty"%3Afalse%2C"blurInfoType"%3A%5B"disk"%2C"exact"%5D%2C"zoneIdsByTypes"%3A%7B"zoneIds"%3A%5B"-166713"%5D%7D%7D&extensionType=extendedIfNoResult','Bayonne');
+  //await scrape(website+'/realEstateAds.json?filters=%7B"size"%3A24%2C"from"%3A0%2C"showAllModels"%3Afalse%2C"filterType"%3A"buy"%2C"propertyType"%3A%5B"house"%2C"flat"%5D%2C"page"%3A1%2C"sortBy"%3A"relevance"%2C"sortOrder"%3A"desc"%2C"onTheMarket"%3A%5Btrue%5D%2C"zoneIdsByTypes"%3A%7B"zoneIds"%3A%5B"-422124"%5D%7D%7D&extensionType=extendedIfNoResult&leadingCount=2','Anglet');
+  //await scrape(website+'/realEstateAds.json?filters=%7B"size"%3A24%2C"from"%3A0%2C"showAllModels"%3Afalse%2C"filterType"%3A"buy"%2C"propertyType"%3A%5B"house"%2C"flat"%5D%2C"page"%3A1%2C"sortBy"%3A"relevance"%2C"sortOrder"%3A"desc"%2C"onTheMarket"%3A%5Btrue%5D%2C"limit"%3A"c~%60iGxhhH%3Fm%7BV~vh%40tA%3F%60vV"%2C"newProperty"%3Afalse%2C"blurInfoType"%3A%5B"disk"%2C"exact"%5D%2C"zoneIdsByTypes"%3A%7B"zoneIds"%3A%5B"-166713"%5D%7D%7D&extensionType=extendedIfNoResult','Bayonne');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":0,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"page":1,"sortBy":"price","sortOrder":"desc","onTheMarket":[true],"mapMode":"enabled","limit":"_inhGvpsH?}iHxvHB?tiH","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-166717"]}}','Biarritz');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":24,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"page":1,"sortBy":"price","sortOrder":"desc","onTheMarket":[true],"mapMode":"enabled","limit":"_inhGvpsH?}iHxvHB?tiH","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-166717"]}}','Biarritz');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":48,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"page":1,"sortBy":"price","sortOrder":"desc","onTheMarket":[true],"mapMode":"enabled","limit":"_inhGvpsH?}iHxvHB?tiH","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-166717"]}}','Biarritz');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":0,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"desc","onTheMarket":[true],"zoneIdsByTypes":{"zoneIds":["-422124"]}}','Anglet');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":24,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"desc","onTheMarket":[true],"zoneIdsByTypes":{"zoneIds":["-422124"]}}','Anglet');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":48,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"desc","onTheMarket":[true],"zoneIdsByTypes":{"zoneIds":["-422124"]}}','Anglet');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":0,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"desc","onTheMarket":[true],"limit":"invhGnueH?ytQzzSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-166713"]}}','Bayonne');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":24,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"desc","onTheMarket":[true],"limit":"invhGnueH?ytQzzSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-166713"]}}','Bayonne');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":48,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"relevance","sortOrder":"desc","onTheMarket":[true],"limit":"invhGnueH?ytQzzSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-166713"]}}','Bayonne');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":0,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"limit":"cnohGnksG?ujd@xxh@N?vid@","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-373986"]}}','Hasparren');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":24,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"limit":"cnohGnksG?ujd@xxh@N?vid@","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-373986"]}}','Hasparren');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":48,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"limit":"cnohGnksG?ujd@xxh@N?vid@","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-373986"]}}','Hasparren');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":0,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"limit":"}hziGfl{G?ytQzxSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-75973"]}}','Hossegor');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":0,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"limit":"}hziGfl{G?ytQzxSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-75973"]}}','Hossegor');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":0,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"limit":"}hziGfl{G?ytQzxSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-75973"]}}','Hossegor');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":0,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"mapMode":"enabled","limit":"ksajGvqxG?ytQlxSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-75972"]}}','Seignosse');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":24,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"mapMode":"enabled","limit":"ksajGvqxG?ytQlxSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-75972"]}}','Seignosse');
+  await scrape(website+'/realEstateAds.json?filters={"size":24,"from":48,"showAllModels":false,"filterType":"buy","propertyType":["flat"],"isNotFurnished":true,"isNotLifeAnnuitySale":true,"isNotInResidence":true,"page":1,"sortBy":"price","sortOrder":"asc","onTheMarket":[true],"mapMode":"enabled","limit":"ksajGvqxG?ytQlxSF?jtQ","newProperty":false,"blurInfoType":["disk","exact"],"zoneIdsByTypes":{"zoneIds":["-75972"]}}','Seignosse');
 
 }
 scrapeAll();
@@ -181,10 +212,9 @@ const putPost = function(post){
 
 
 //CRON
-/*
 var CronJob = require('cron').CronJob;
 var cronJob = new CronJob({
-    cronTime: '0 30 8 * * *',
+    cronTime: '0 0 8,20 * * *',
     onTick: function() {
       scrapeAll();
       //process(website+'/buy/between-100000-500000-in-gold+coast/list-1','Gold Coast');
@@ -201,4 +231,3 @@ var cronJob = new CronJob({
     }
 });
 cronJob.start();
-*/
